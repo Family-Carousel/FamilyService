@@ -21,7 +21,9 @@
   "homepage": "https://github.com/Family-Carousel/FamilyService#readme",
   "dependencies": {
     "ajv": "^6.10.2",
+    "aws-sdk": "^2.556.0",
     "config": "^3.2.4",
+    "https": "^1.0.0",
     "shortid": "^2.2.15"
   },
   "devDependencies": {
