@@ -27,10 +27,77 @@ module.exports = {
 
             docClient.put(params).promise()
                 .then((res) => {
-                    return resolve(item);
+                    return resolve(res.Item);
                 })
                 .catch((err) => {
                     return reject('Error putting document to dynamo: ' + err);
+                })
+        });
+    },
+    list: async (tableName) => {
+        return new Promise(function (resolve, reject) {
+            var docClient = init.dynamodb();
+
+            var params = {
+                TableName: tableName
+            };
+
+            docClient.scan(params).promise()
+                .then((res) => {
+                    if (!res || !res.Items) {
+                        return reject('List did not return expected format: ' + JSON.stringify(res));
+                    }
+                    return resolve(res.Items);
+                })
+                .catch((err) => {
+                    return reject('Error getting list from dynamo: ' + err);
+                })
+        });
+    },
+    paramsObjectFactory: (tableName, indexName, attributeName, key) => {
+        return {
+            TableName: tableName,
+            indexName: indexName,
+            KeyConditionExpression: attributeName + ' = :hashKeyValue',
+            ExpressionAttributeValues: {
+                ':hashKeyValue': key
+            }
+        };
+    },
+    query: async (queryObj) => {
+        return new Promise(function (resolve, reject) {
+            var docClient = init.dynamodb();
+
+            docClient.query(queryObj).promise()
+                .then((res) => {
+                    if (!res || !res.Items) {
+                        return reject('Query did not return expected format: ' + JSON.stringify(res));
+                    }
+                    return resolve(res.Items);
+                })
+                .catch((err) => {
+                    return reject('Error getting Query from dynamo: ' + err);
+                })
+        });
+    },
+    getByHashKey: async (tableName, keyObj) => {
+        return new Promise(function (resolve, reject) {
+            var docClient = init.dynamodb();
+
+            var params = {
+                TableName: tableName,
+                key: keyObj
+            };
+
+            docClient.get(params).promise()
+                .then((res) => {
+                    if (!res || !res.Item) {
+                        return reject('Key does not exist in table: ' + JSON.stringify(res));
+                    }
+                    return resolve(res.Item);
+                })
+                .catch((err) => {
+                    return reject('Error getting Document from dynamo: ' + err);
                 })
         });
     },

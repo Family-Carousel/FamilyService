@@ -6,7 +6,7 @@ provider:
   profile: ${opt:profile, ''}
   region: us-east-2
   memorySize: 1024
-  logRetentionInDays: 2
+  logRetentionInDays: 3
   stage: ${opt:stage, 'dev'}
   apiKeys: 
     - FamilyCarousel-FamilyService-${self:provider.stage}
@@ -19,7 +19,7 @@ provider:
       rateLimit: 100
   environment:
     NODE_ENV: ${self:provider.stage}
-    FAMILY_TABLE: ${self:custom.templateTableNameMap.${self:provider.stage}}
+    FAMILY_TABLE: ${self:custom.familyTableNameMap.${self:provider.stage}}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -30,7 +30,7 @@ provider:
         - "dynamodb:*"
       Resource: 
         - { "Fn::GetAtt": ["FAMILYTABLE", "Arn"] }
-        - Fn:Join:
+        - Fn::Join:
           - "/"
           - 
             - { "Fn::GetAtt": ["FAMILYTABLE", "Arn"] }
