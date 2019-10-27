@@ -1,0 +1,97 @@
+service: familyservice
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  profile: ${opt:profile, ''}
+  region: us-east-2
+  memorySize: 1024
+  logRetentionInDays: 3
+  stage: ${opt:stage, 'dev'}
+  apiKeys: 
+    - FamilyCarousel-FamilyService-${self:provider.stage}
+  usagePlan:
+    quota:
+      limit: 10000
+      period: DAY
+    throttle:
+      burstLimit: 100
+      rateLimit: 100
+  environment:
+    NODE_ENV: ${self:provider.stage}
+    FAMILY_TABLE: ${self:custom.familyTableNameMap.${self:provider.stage}}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+      - "logs: *"
+      Resource: "*"
+    - Effect: "Allow"
+      Action:   
+        - "dynamodb:*"
+      Resource: 
+        - { "Fn::GetAtt": ["FAMILYTABLE", "Arn"] }
+        - Fn::Join:
+          - "/"
+          - 
+            - { "Fn::GetAtt": ["FAMILYTABLE", "Arn"] }
+            - "index/*"
+
+custom:
+  serverless-offline:
+    host: 0.0.0.0
+  familyTableNameMap:
+    dev: devFamilyTable
+  FamilyServiceDomainMap:
+    dev: familyservice-dev.familycarousel.com
+  FamilyServiceCertMap:
+    dev: '*.familycarousel.com'
+  customDomain:
+    domainName: ${self:custom.FamilyServiceDomainMap.${self:provider.stage}}
+    certificateName: ${self:custom.FamilyServiceCertMap.${self:provider.stage}}
+    createRoute53Record: true
+    endpointType: 'regional'
+
+plugins:
+  - serverless-offline
+  - serverless-domain-manager
+  - serverless-plugin-optimize
+
+package: 
+  individually: true
+
+
+functions:
+  createFamily:
+    name: family-carousel-create-family-${self:provider.stage}
+    handler: handlers/Create.createFamily
+    description: Lambda for Creating a family in the family service
+    timeout: 30
+    events:
+      - http:
+          path: /family
+          method: put
+          private: true
+
+resources:
+  Resources:
+    FAMILYTABLE:
+      Type: AWS::DynamoDB::Table
+      Properties: 
+        TableName: ${self:custom.familyTableNameMap.${self:provider.stage}}
+        AttributeDefinitions:
+          - AttributeName: Id
+            AttributeType: S
+          - AttributeName: MemberId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: Id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        GlobalSecondaryIndexes:
+          -
+            IndexName: MemberId_IDX
+            KeySchema:
+              - AttributeName: MemberId
+                KeyType: HASH
+            Projection:
+              ProjectionType: "ALL"
