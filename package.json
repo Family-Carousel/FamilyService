@@ -1,0 +1,35 @@
+{
+  "name": "familyservice",
+  "version": "1.0.0",
+  "description": "Service to handle family data for the family carousel application",
+  "main": "handlers/Create.js",
+  "scripts": {
+    "test": "yarn jest",
+    "test:coverage": "yarn jest --coverage",
+    "start": "yarn serverless offline --noTimeout",
+    "deploy:dev": "yarn serverless deploy --stage=dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Family-Carousel/FamilyService.git"
+  },
+  "author": "Michael Cavanaugh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Family-Carousel/FamilyService/issues"
+  },
+  "homepage": "https://github.com/Family-Carousel/FamilyService#readme",
+  "dependencies": {
+    "ajv": "^6.10.2",
+    "config": "^3.2.4",
+    "shortid": "^2.2.15"
+  },
+  "devDependencies": {
+    "jest": "^24.9.0",
+    "jest-junit": "^9.0.0",
+    "serverless": "^1.55.1",
+    "serverless-domain-manager": "^3.3.0",
+    "serverless-offline": "^5.12.0",
+    "serverless-plugin-optimize": "^4.1.0-rc.1"
+  }
+}
