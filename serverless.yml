@@ -75,7 +75,7 @@ functions:
     events:
       - http:
           path: /family
-          method: put
+          method: post
           private: true
   listFamiliesByMemberId:
     name: family-carousel-list-families-by-memberid-${self:provider.stage}
@@ -158,5 +158,5 @@ resources:
         AccessControl: Private
         BucketEncryption:
           ServerSideEncryptionConfiguration:
-            - ServerSideEncryptionDyDefault:
-                SSEAlforithm: AES256
+            - ServerSideEncryptionByDefault:
+                SSEAlgorithm: AES256
