@@ -6,19 +6,19 @@ const familyService = require('../services/FamilyService');
 const env = process.env.NODE_ENV;
 
 module.exports = {
-    deleteFamily: async (event) => {
+    getPhotoByFamilyId: async (event) => {
         try {
             let familyId = event.pathParameters.familyId;
-            let response = await familyService.deleteFamily( familyId );
+            let photo = await familyService.getPhotoByFamilyId( familyId );
 
             if (response) {
                 return utils.buildResponse(200, response);
             }
 
-            return utils.buildResponse(400, 'Family not deleted')
+            return utils.buildResponse(404, 'Photo not found')
         } catch (err) {
-            console.error('Family Service delete family error: ' + err);
-            return utils.buildResponse(400, 'Family Service delete family error');
+            console.error('Family Service Get Photo Error: ' + err);
+            return utils.buildResponse(400, 'Failed to get Family Photo');
         }
     }
 };
