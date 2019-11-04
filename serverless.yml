@@ -35,8 +35,14 @@ provider:
           - 
             - { "Fn::GetAtt": ["FAMILYTABLE", "Arn"] }
             - "index/*"
+    - Effect: "Allow"
+      Action:
+      - "s3: *"
+      Resource:
+        - "arn:aws:s3:::${self:custom.FamilyPhotoBucketName}/*"
 
 custom:
+  FamilyPhotoBucketName: familycarousel-familyservice-photo-bucket-${self:provider.stage}
   serverless-offline:
     host: 0.0.0.0
   familyTableNameMap:
@@ -69,7 +75,57 @@ functions:
     events:
       - http:
           path: /family
+          method: post
+          private: true
+  listFamiliesByMemberId:
+    name: family-carousel-list-families-by-memberid-${self:provider.stage}
+    handler: handlers/List.listFamilyByMemberId
+    description: Lambda for listing all familys by memberId in the family service
+    timeout: 30
+    events:
+      - http:
+          path: /family
+          method: get
+          private: true
+  getFamily:
+    name: family-carousel-get-family-${self:provider.stage}
+    handler: handlers/List.getFamilyByFamilyId
+    description: Lambda for getting a family by its id
+    timeout: 30
+    events:
+      - http:
+          path: /family/{familyId}
+          method: get
+          private: true
+  updateFamily:
+    name: family-carousel-update-family-${self:provider.stage}
+    handler: handlers/Update.updateFamily
+    description: Lambda for updating a family
+    timeout: 30
+    events:
+      - http:
+          path: /family
           method: put
+          private: true
+  deleteFamily:
+    name: family-carousel-delete-family-${self:provider.stage}
+    handler: handlers/Delete.deleteFamily
+    description: Lambda for deleting a family
+    timeout: 30
+    events:
+      - http:
+          path: /family/{familyId}
+          method: delete
+          private: true
+  getFamilyPhoto:
+    name: family-carousel-get-family-photo-${self:provider.stage}
+    handler: handlers/GetPhoto.getPhotoByFamilyId
+    description: Lambda for getting family photo
+    timeout: 30
+    events:
+      - http:
+          path: /family/{familyId}/photo
+          method: get
           private: true
 
 resources:
@@ -95,3 +151,12 @@ resources:
                 KeyType: HASH
             Projection:
               ProjectionType: "ALL"
+    FAMILYPHOTOBUCKET:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.FamilyPhotoBucketName}
+        AccessControl: Private
+        BucketEncryption:
+          ServerSideEncryptionConfiguration:
+            - ServerSideEncryptionByDefault:
+                SSEAlgorithm: AES256
