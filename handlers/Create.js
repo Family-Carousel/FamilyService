@@ -17,7 +17,7 @@ module.exports = {
 
             return utils.buildResponse(400, 'Family not created')
         } catch (err) {
-            console.log('Family Service Create a family error: ' + err);
+            console.error('Family Service Create a family error: ' + err);
             return utils.buildResponse(400, 'Family Service Create a family error');
         }
     }
