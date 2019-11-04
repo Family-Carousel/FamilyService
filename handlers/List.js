@@ -31,7 +31,7 @@ module.exports = {
 
             return utils.buildResponse(404, 'family not found')
         } catch (err) {
-            console.error('Family Service Get familt Error: ' + err);
+            console.error('Family Service Get family Error: ' + err);
             return utils.buildResponse(400, 'Failed to get list of family by Id');
         }
     },
