@@ -94,10 +94,10 @@ functions:
     name: family-carousel-get-family-${self:provider.stage}
     handler: handlers/List.getFamilyByFamilyId
     description: Lambda for getting a family by its id
-    timeout: 30
+    timeout: 30c xsza556
     events:
       - http:
-          path: /family/{id}
+          path: /family/{familyId}
           method: get
           private: true
   updateFamily:
