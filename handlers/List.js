@@ -23,7 +23,7 @@ module.exports = {
     },
     getFamilyByFamilyId: async (event) => {
         try {
-            let family = await familyService.getFamilyByFamilyId( event.pathParameters.familyId );
+            let family = await familyService.getFamilyByFamilyId( event.pathParameters.id );
 
             if (family) {
                 return utils.buildResponse(200, family);

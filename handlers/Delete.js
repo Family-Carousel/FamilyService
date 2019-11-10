@@ -8,7 +8,7 @@ const env = process.env.NODE_ENV;
 module.exports = {
     deleteFamily: async (event) => {
         try {
-            let familyId = event.pathParameters.familyId;
+            let familyId = event.pathParameters.id;
             let response = await familyService.deleteFamily( familyId );
 
             if (response) {

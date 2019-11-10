@@ -47,10 +47,13 @@ custom:
     host: 0.0.0.0
   familyTableNameMap:
     dev: devFamilyTable
+    prod: prodFamilyTable
   FamilyServiceDomainMap:
     dev: familyservice-dev.familycarousel.com
+    prod: familyservice.familycarousel.com
   FamilyServiceCertMap:
     dev: '*.familycarousel.com'
+    prod: '*.familycarousel.com'
   customDomain:
     domainName: ${self:custom.FamilyServiceDomainMap.${self:provider.stage}}
     certificateName: ${self:custom.FamilyServiceCertMap.${self:provider.stage}}
@@ -94,7 +97,7 @@ functions:
     timeout: 30
     events:
       - http:
-          path: /family/{familyId}
+          path: /family/{id}
           method: get
           private: true
   updateFamily:
@@ -114,7 +117,7 @@ functions:
     timeout: 30
     events:
       - http:
-          path: /family/{familyId}
+          path: /family/{id}
           method: delete
           private: true
   getFamilyPhoto:
@@ -124,7 +127,7 @@ functions:
     timeout: 30
     events:
       - http:
-          path: /family/{familyId}/photo
+          path: /family/{Id}/photo
           method: get
           private: true
 
