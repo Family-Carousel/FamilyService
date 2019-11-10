@@ -9,8 +9,8 @@ module.exports = {
 
     listFamilyByMemberId: async (event) => {
         try {
-            let id = event.pathParameters.familyId;
-            let families = await familyService.listFamilysByMemberId( id );
+            let familyId = event.pathParameters.familyId;
+            let families = await familyService.listFamilysByMemberId( familyId );
 
             if (families) {
                 return utils.buildResponse(200, families);
@@ -23,10 +23,9 @@ module.exports = {
         }
     },
     getFamilyByFamilyId: async (event) => {
-        console.log(event);
-
         try {
-            let family = await familyService.getFamilyByFamilyId( event.pathParameters.id );
+            let familyId = event.pathParameters.familyId;
+            let family = await familyService.getFamilyByFamilyId( familyId );
 
             if (family) {
                 return utils.buildResponse(200, family);

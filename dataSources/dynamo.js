@@ -12,9 +12,9 @@ module.exports = {
             throw('Error updating family via Dynamo');
         }
     },
-    getFamilyById: async (familyId) => {
+    getFamilyById: async (FamilyId) => {
         try {
-            return await dynamoUtils.getByHashKey(tableName, { id: familyId });
+            return await dynamoUtils.getByHashKey(tableName, { FamilyId: FamilyId });
         } catch(err) {
             console.error('Error getting family by id via Dynamo: ' + err);
             throw('Error getting family');

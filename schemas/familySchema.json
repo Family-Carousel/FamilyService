@@ -1,7 +1,7 @@
 {
     "type": "object",
     "properties": {
-        "Id": { "type": "string" },
+        "FamilyId": { "type": "string" },
         "MemberId": { "type": "string" },
         "Name": { "type": "string" },
         "IsActive": { "type": "integer" },
@@ -10,5 +10,5 @@
         "LastUpdateBy": { "type": "string" },
         "LastUpdateDateTime": { "type": "string" }
     },
-    "required": ["Id", "MemberId", "Name", "IsActive"]
+    "required": ["FamilyId", "MemberId", "Name", "IsActive"]
 }

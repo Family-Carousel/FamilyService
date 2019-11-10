@@ -117,7 +117,7 @@ functions:
     timeout: 30
     events:
       - http:
-          path: /family/{id}
+          path: /family/{familyId}
           method: delete
           private: true
   getFamilyPhoto:
@@ -127,7 +127,7 @@ functions:
     timeout: 30
     events:
       - http:
-          path: /family/{Id}/photo
+          path: /family/{familyId}/photo
           method: get
           private: true
 
@@ -138,12 +138,12 @@ resources:
       Properties: 
         TableName: ${self:custom.familyTableNameMap.${self:provider.stage}}
         AttributeDefinitions:
-          - AttributeName: Id
+          - AttributeName: FamilyId
             AttributeType: S
           - AttributeName: MemberId
             AttributeType: S
         KeySchema:
-          - AttributeName: Id
+          - AttributeName: FamilyId
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
         GlobalSecondaryIndexes:

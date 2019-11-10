@@ -8,8 +8,8 @@ module.exports = {
         const shortid = require('shortid');
         const familySchema = require('../schemas/familySchema');
 
-        familyData.id = shortid.generate();
-        familyData.isActive = 1;
+        familyData.FamilyId = shortid.generate();
+        familyData.IsActive = 1;
 
         try {
             const ajv = new Ajv();
@@ -32,13 +32,9 @@ module.exports = {
             throw('Failed to save family to data table');
         }
     },
-    getFamilyByFamilyId: async (familyId) => {
-        if (familyId instanceof String) {
-            throw("Request must include a string for MemberId");
-        }
-
+    getFamilyByFamilyId: async (FamilyId) => {
         try {
-            const family = await dynamo.getFamilyByFamilyId(familyId);
+            const family = await dynamo.getFamilyByFamilyId(FamilyId);
             return family;
         } catch (err) {
             console.error("Error: " + err);
@@ -46,10 +42,6 @@ module.exports = {
         }
     },
     listFamilysByMemberId: async (memberId) => {
-        if (typeof memberId !== "string") {
-            throw("Request must include a string for memberId");
-        }
-
         try {
             const family = await dynamo.listFamilysByMemberId(memberId);
             return family;
