@@ -2,7 +2,7 @@ service: familyservice
 
 provider:
   name: aws
-  runtime: nodejs10.x
+  runtime: nodejs8.10
   profile: ${opt:profile, ''}
   region: us-east-2
   memorySize: 1024
@@ -94,7 +94,7 @@ functions:
     name: family-carousel-get-family-${self:provider.stage}
     handler: handlers/List.getFamilyByFamilyId
     description: Lambda for getting a family by its id
-    timeout: 30c xsza556
+    timeout: 30
     events:
       - http:
           path: /family/{familyId}

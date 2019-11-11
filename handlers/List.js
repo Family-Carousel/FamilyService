@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const utils = require('../handlers/utilities');
 const familyService = require('../services/FamilyService');

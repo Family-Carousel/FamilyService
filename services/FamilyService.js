@@ -1,6 +1,6 @@
 'use script';
 
-const dynamo = require('');
+const dynamo = require('../dataSources/dynamo');
 const Ajv = require('ajv');
 
 module.exports = {
@@ -34,7 +34,7 @@ module.exports = {
     },
     getFamilyByFamilyId: async (FamilyId) => {
         try {
-            const family = await dynamo.getFamilyByFamilyId(FamilyId);
+            const family = await dynamo.getFamilyById(FamilyId);
             return family;
         } catch (err) {
             console.error("Error: " + err);
