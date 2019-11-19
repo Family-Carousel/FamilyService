@@ -2,7 +2,7 @@ service: familyservice
 
 provider:
   name: aws
-  runtime: nodejs8.10
+  runtime: nodejs12.x
   profile: ${opt:profile, ''}
   region: us-east-2
   memorySize: 1024
@@ -42,6 +42,14 @@ provider:
         - "arn:aws:s3:::${self:custom.FamilyPhotoBucketName}/*"
 
 custom:
+  shortName: FamilyCarousel
+  serviceName: FamilyService
+  createFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-CreateFamily-${self:provider.stage}
+  listFamiliesByMemberIdName: ${self:custom.shortName}-${self:custom.serviceName}-ListFamiliesByMemberId-${self:provider.stage}
+  getFamilyByIdName: ${self:custom.shortName}-${self:custom.serviceName}-GetFamilyById-${self:provider.stage}
+  updateFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-UpdateFamily-${self:provider.stage}
+  deleteFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-DeleteFamily-${self:provider.stage}
+  getFamilyPhotoName: ${self:custom.shortName}-${self:custom.serviceName}-GetFamilyPhoto-${self:provider.stage}
   FamilyPhotoBucketName: familycarousel-familyservice-photo-bucket-${self:provider.stage}
   serverless-offline:
     host: 0.0.0.0
@@ -71,7 +79,7 @@ package:
 
 functions:
   createFamily:
-    name: family-carousel-create-family-${self:provider.stage}
+    name: ${self:custom.createFamilyName}
     handler: handlers/Create.createFamily
     description: Lambda for Creating a family in the family service
     timeout: 30
@@ -81,7 +89,7 @@ functions:
           method: post
           private: true
   listFamiliesByMemberId:
-    name: family-carousel-list-families-by-memberid-${self:provider.stage}
+    name: ${self:custom.listFamiliesByMemberIdName}
     handler: handlers/List.listFamilyByMemberId
     description: Lambda for listing all familys by memberId in the family service
     timeout: 30
@@ -91,7 +99,7 @@ functions:
           method: get
           private: true
   getFamily:
-    name: family-carousel-get-family-${self:provider.stage}
+    name: ${self:custom.getFamilyByIdName}
     handler: handlers/List.getFamilyByFamilyId
     description: Lambda for getting a family by its id
     timeout: 30
@@ -101,7 +109,7 @@ functions:
           method: get
           private: true
   updateFamily:
-    name: family-carousel-update-family-${self:provider.stage}
+    name: ${self:custom.updateFamilyName}
     handler: handlers/Update.updateFamily
     description: Lambda for updating a family
     timeout: 30
@@ -111,7 +119,7 @@ functions:
           method: put
           private: true
   deleteFamily:
-    name: family-carousel-delete-family-${self:provider.stage}
+    name: ${self:custom.deleteFamilyName}
     handler: handlers/Delete.deleteFamily
     description: Lambda for deleting a family
     timeout: 30
@@ -121,7 +129,7 @@ functions:
           method: delete
           private: true
   getFamilyPhoto:
-    name: family-carousel-get-family-photo-${self:provider.stage}
+    name: ${self:custom.getFamilyPhotoName}
     handler: handlers/GetPhoto.getPhotoByFamilyId
     description: Lambda for getting family photo
     timeout: 30

@@ -9,7 +9,7 @@ module.exports = {
     createFamily: async (event) => {
         try {
             let familyData = JSON.parse(event.body);
-            let response = await familyService.createFamily( familyData );
+            let response = await familyService.createFamily( familyData.data );
 
             if (response) {
                 return utils.buildResponse(201, response);

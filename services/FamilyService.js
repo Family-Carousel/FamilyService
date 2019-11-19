@@ -10,10 +10,12 @@ module.exports = {
 
         familyData.FamilyId = shortid.generate();
         familyData.IsActive = 1;
+        console.log(familyData);
 
         try {
             const ajv = new Ajv();
             let valid = ajv.validate(familySchema, familyData);
+            console.log('is valid? ', valid);
 
             if (!valid) {
                 console.log('Creating Family - Invalid Family Format: ' + ajv.errorsText());
@@ -26,6 +28,7 @@ module.exports = {
 
         try {
             const dynamoResponse = await dynamo.saveFamily(familyData);
+            console.log('dynamo: ', dynamoResponse);
             return dynamoResponse;
         } catch (err) {
             console.error('Failed to save family to data table: ' + err);

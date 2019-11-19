@@ -1,5 +1,3 @@
-'use strict';
-
 const DynamoDB = require('aws-sdk/clients/dynamodb');
 const https = require('https');
 const AWS = require('aws-sdk');
@@ -24,12 +22,19 @@ module.exports = {
                 TableName: tableName,
                 Item: item
             };
+            console.log('table name: ', tableName);
+            console.log('item: ', item);
+            console.log('params: ', params);
 
             docClient.put(params).promise()
                 .then((res) => {
-                    return resolve(res.Item);
+                    console.log('dynamo res: ', res);
+                    console.log('resolve: ', resolve);
+                    return resolve(item);
                 })
                 .catch((err) => {
+                    console.log('dynamo err: ', err);
+                    console.log('reject: ', reject);
                     return reject('Error putting document to dynamo: ' + err);
                 })
         });
@@ -70,9 +75,6 @@ module.exports = {
 
             docClient.query(queryObj).promise()
                 .then((res) => {
-                    if (!res || !res.Items) {
-                        return reject('Query did not return expected format: ' + JSON.stringify(res));
-                    }
                     return resolve(res.Items);
                 })
                 .catch((err) => {
@@ -86,7 +88,7 @@ module.exports = {
 
             var params = {
                 TableName: tableName,
-                key: keyObj
+                Key: keyObj
             };
 
             docClient.get(params).promise()

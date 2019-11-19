@@ -6,7 +6,10 @@ const tableName = process.env.FAMILY_TABLE;
 module.exports = {
     saveFamily: async (familyData) => {
         try {
-            return await dynamoUtils.putObject(tableName, familyData);
+            console.log('we made it to the dynamo put');
+            const returnValue = await dynamoUtils.putObject(tableName, familyData);
+            console.log('returnValue: ', returnValue);
+            return returnValue;
         } catch (err) {
             console.error('Error updating family via Dynamo: ' + err);
             throw('Error updating family via Dynamo');
