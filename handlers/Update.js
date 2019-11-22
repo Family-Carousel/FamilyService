@@ -10,7 +10,7 @@ module.exports = {
     updateFamily: async (event) => {
         try {
             let familyData = JSON.parse(event.body);
-            let family = await familyService.updateFamily( familyData );
+            let family = await familyService.updateFamily( familyData.data );
 
             if (family) {
                 return utils.buildResponse(201, family);

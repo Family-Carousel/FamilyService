@@ -61,7 +61,7 @@ module.exports = {
             let valid = ajv.validate(familySchema, familyData);
 
             if (!valid) {
-                console.error("Updating Family - Invalid Family Format: " + ajv.errorsText);
+                console.error("Updating Family - Invalid Family Format: " + ajv.errorsText());
                 throw("Updating Family - Invalid Family Format");
             }
         } catch (err) {
@@ -79,8 +79,8 @@ module.exports = {
     },
     deleteFamily: async (familyId) => {
         try {
-            const family = await dynamo.getFamilyByFamilyId(familyId);
-            family.isActive = 0;
+            const family = await dynamo.getFamilyById(familyId);
+            family.IsActive = 0;
 
             const dynamoResponse = await dynamo.saveFamily(family);
             return dynamoResponse;
