@@ -150,7 +150,7 @@ resources:
         AttributeDefinitions:
           - AttributeName: Id
             AttributeType: S
-          - AttributeName: FamilyCreaterId
+          - AttributeName: MemberId
             AttributeType: S
         KeySchema:
           - AttributeName: Id
@@ -158,23 +158,12 @@ resources:
         BillingMode: PAY_PER_REQUEST
         GlobalSecondaryIndexes:
           -
-            IndexName: FamilyCreaterId_IDX
+            IndexName: MemberId_IDX
             KeySchema:
-              - AttributeName: FamilyCreaterId
+              - AttributeName: MemberId
                 KeyType: HASH
             Projection:
               ProjectionType: "ALL"
-    MEMBERTABLE:
-      Type: AWS::DynamoDB::Table
-      Properties: 
-        TableName: ${self:custom.memberTableNameMap.${self:provider.stage}}
-        AttributeDefinitions:
-          - AttributeName: Id
-            AttributeType: S
-        KeySchema:
-          - AttributeName: Id
-            KeyType: HASH
-        BillingMode: PAY_PER_REQUEST
     FAMILYPHOTOBUCKET:
       Type: AWS::S3::Bucket
       Properties:
