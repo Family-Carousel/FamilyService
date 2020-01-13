@@ -2,10 +2,10 @@ service: familyservice
 
 provider:
   name: aws
-  runtime: nodejs10.x
+  runtime: nodejs12.x
   profile: ${opt:profile, ''}
   region: us-east-2
-  memorySize: 1024
+  memorySize: 128
   logRetentionInDays: 3
   stage: ${opt:stage, 'dev'}
   apiKeys: 
@@ -15,8 +15,8 @@ provider:
       limit: 10000
       period: DAY
     throttle:
-      burstLimit: 100
-      rateLimit: 100
+      burstLimit: 1000
+      rateLimit: 1000
   environment:
     NODE_ENV: ${self:provider.stage}
     FAMILY_TABLE: ${self:custom.familyTableNameMap.${self:provider.stage}}
@@ -56,6 +56,9 @@ custom:
   familyTableNameMap:
     dev: devFamilyTable
     prod: prodFamilyTable
+  memberTableNameMap:
+    dev: devMemberTable
+    prod: prodMemberTable
   FamilyServiceDomainMap:
     dev: familyservice-dev.familycarousel.com
     prod: familyservice.familycarousel.com
@@ -75,7 +78,6 @@ plugins:
 
 package: 
   individually: true
-
 
 functions:
   createFamily:
@@ -146,22 +148,33 @@ resources:
       Properties: 
         TableName: ${self:custom.familyTableNameMap.${self:provider.stage}}
         AttributeDefinitions:
-          - AttributeName: FamilyId
+          - AttributeName: Id
             AttributeType: S
-          - AttributeName: MemberId
+          - AttributeName: FamilyCreaterId
             AttributeType: S
         KeySchema:
-          - AttributeName: FamilyId
+          - AttributeName: Id
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
         GlobalSecondaryIndexes:
           -
-            IndexName: MemberId_IDX
+            IndexName: FamilyCreaterId_IDX
             KeySchema:
-              - AttributeName: MemberId
+              - AttributeName: FamilyCreaterId
                 KeyType: HASH
             Projection:
               ProjectionType: "ALL"
+    MEMBERTABLE:
+      Type: AWS::DynamoDB::Table
+      Properties: 
+        TableName: ${self:custom.memberTableNameMap.${self:provider.stage}}
+        AttributeDefinitions:
+          - AttributeName: Id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: Id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
     FAMILYPHOTOBUCKET:
       Type: AWS::S3::Bucket
       Properties:
