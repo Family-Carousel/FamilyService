@@ -20,6 +20,7 @@ provider:
   environment:
     NODE_ENV: ${self:provider.stage}
     FAMILY_TABLE: ${self:custom.familyTableNameMap.${self:provider.stage}}
+    MEMBER_TABLE: ${self:custom.memberTableNameMap.${self:provider.stage}}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -29,6 +30,7 @@ provider:
       Action:   
         - "dynamodb:*"
       Resource: 
+        - { "Fn::GetAtt": ["MEMBERTABLE", "Arn"] }
         - { "Fn::GetAtt": ["FAMILYTABLE", "Arn"] }
         - Fn::Join:
           - "/"
@@ -155,12 +157,26 @@ resources:
         KeySchema:
           - AttributeName: Id
             KeyType: HASH
+          - AttributeName: MemberId
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+    MEMBERTABLE:
+      Type: AWS::DynamoDB::Table
+      Properties: 
+        TableName: ${self:custom.memberTableNameMap.${self:provider.stage}}
+        AttributeDefinitions:
+          - AttributeName: Id
+            AttributeType: S
+          - AttributeName: FamilyId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: Id
+            KeyType: HASH
         BillingMode: PAY_PER_REQUEST
         GlobalSecondaryIndexes:
-          -
-            IndexName: MemberId_IDX
+          - IndexName: FamilyId_IDX
             KeySchema:
-              - AttributeName: MemberId
+              - AttributeName: FamilyId
                 KeyType: HASH
             Projection:
               ProjectionType: "ALL"
