@@ -1,6 +1,6 @@
 'use strict';
-
-const dynamoUtils = require('./dynamo.utilities');
+import { DynamoUtils } from './dynamo.utilities';
+import { IFamily } from '../interfaces/IFamily';
 const tableName = process.env.FAMILY_TABLE;
 // const _ = require('lodash');
 
@@ -53,9 +53,9 @@ const tableName = process.env.FAMILY_TABLE;
 
 class FamilyRepo {
 
-    public async saveFamily(familyData: any) {
+    public async saveFamily(familyData: IFamily) {
         try {
-            const response = await dynamoUtils.putObject(tableName, familyData);
+            const response = await DynamoUtils.PutItem(tableName!, familyData);
             return response;
         } catch (err) {
             console.error('Error updating family via Dynamo: ', err);

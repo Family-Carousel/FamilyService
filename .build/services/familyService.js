@@ -1,48 +1,40 @@
+"use strict";
 'use script';
-
-import { IFamily } from '../interfaces/IFamily';
-
+Object.defineProperty(exports, "__esModule", { value: true });
 const familyRepo = require('../dataSources/family-repository');
 const Ajv = require('ajv');
-
 class FamilyService {
-    
-    public async createFamily(familyData: IFamily) {
+    async createFamily(familyData) {
         const shortid = require('shortid');
         const familySchema = require('../schemas/familySchema');
-
         if (!familyData) {
             return;
         }
-
         familyData.Id = shortid.generate();
         familyData.IsActive = 1;
-
         try {
             const ajv = new Ajv();
             let valid = ajv.validate(familySchema, familyData);
-
             if (!valid) {
                 console.log('Creating Family - Invalid Family Format: ', ajv.errorsText());
                 throw new Error("Creating Family - Invalid Family Format");
             }
-        } catch (err) {
+        }
+        catch (err) {
             console.error('Failed to perform validation on family data: ', err);
             throw new Error('Failed to perform validation on family data');
         }
-
         try {
             const response = await familyRepo.saveFamily(familyData);
             return response;
-        } catch (err) {
+        }
+        catch (err) {
             console.error('Failed to save family to data table: ', err);
             throw new Error('Failed to save family to data table');
         }
     }
 }
-
-export const familyService = new FamilyService();
-
+exports.familyService = new FamilyService();
 // module.exports = {
 //     getFamilyByFamilyId: async (FamilyId) => {
 //         try {
@@ -64,11 +56,9 @@ export const familyService = new FamilyService();
 //     },
 //     updateFamily: async (familyData) => {
 //         const familySchema = require("../schemas/familySchema");
-
 //         try {
 //             const ajv = new Ajv();
 //             let valid = ajv.validate(familySchema, familyData);
-
 //             if (!valid) {
 //                 console.error("Updating Family - Invalid Family Format: " + ajv.errorsText());
 //                 throw("Updating Family - Invalid Family Format");
@@ -77,7 +67,6 @@ export const familyService = new FamilyService();
 //             console.error("Error Validating Family Data: " + err);
 //             throw("Error validating family data");
 //         }
-
 //         try {
 //             const dynamoResponse = await dynamo.saveFamily(familyData);
 //             return dynamoResponse;
@@ -90,7 +79,6 @@ export const familyService = new FamilyService();
 //         try {
 //             const family = await dynamo.getFamilyById(familyId);
 //             family.IsActive = 0;
-
 //             const dynamoResponse = await dynamo.saveFamily(family);
 //             return dynamoResponse;
 //         } catch (err) {
@@ -99,3 +87,4 @@ export const familyService = new FamilyService();
 //         }
 //     }
 // };
+//# sourceMappingURL=familyService.js.map

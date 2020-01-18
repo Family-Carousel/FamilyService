@@ -96,56 +96,56 @@ functions:
           path: /family
           method: post
           private: true
-  listFamiliesByMemberId:
-    name: ${self:custom.listFamiliesByMemberIdName}
-    handler: handlers/List.listFamilyByMemberId
-    description: Lambda for listing all familys by memberId in the family service
-    timeout: 30
-    events:
-      - http:
-          path: /family
-          method: get
-          private: true
-  getFamily:
-    name: ${self:custom.getFamilyByIdName}
-    handler: handlers/List.getFamilyByFamilyId
-    description: Lambda for getting a family by its id
-    timeout: 30
-    events:
-      - http:
-          path: /family/{familyId}
-          method: get
-          private: true
-  updateFamily:
-    name: ${self:custom.updateFamilyName}
-    handler: handlers/Update.updateFamily
-    description: Lambda for updating a family
-    timeout: 30
-    events:
-      - http:
-          path: /family
-          method: put
-          private: true
-  deleteFamily:
-    name: ${self:custom.deleteFamilyName}
-    handler: handlers/Delete.deleteFamily
-    description: Lambda for deleting a family
-    timeout: 30
-    events:
-      - http:
-          path: /family/{familyId}
-          method: delete
-          private: true
-  getFamilyPhoto:
-    name: ${self:custom.getFamilyPhotoName}
-    handler: handlers/GetPhoto.getPhotoByFamilyId
-    description: Lambda for getting family photo
-    timeout: 30
-    events:
-      - http:
-          path: /family/{familyId}/photo
-          method: get
-          private: true
+  # listFamiliesByMemberId:
+  #   name: ${self:custom.listFamiliesByMemberIdName}
+  #   handler: handlers/List.listFamilyByMemberId
+  #   description: Lambda for listing all familys by memberId in the family service
+  #   timeout: 30
+  #   events:
+  #     - http:
+  #         path: /family
+  #         method: get
+  #         private: true
+  # getFamily:
+  #   name: ${self:custom.getFamilyByIdName}
+  #   handler: handlers/List.getFamilyByFamilyId
+  #   description: Lambda for getting a family by its id
+  #   timeout: 30
+  #   events:
+  #     - http:
+  #         path: /family/{familyId}
+  #         method: get
+  #         private: true
+  # updateFamily:
+  #   name: ${self:custom.updateFamilyName}
+  #   handler: handlers/Update.updateFamily
+  #   description: Lambda for updating a family
+  #   timeout: 30
+  #   events:
+  #     - http:
+  #         path: /family
+  #         method: put
+  #         private: true
+  # deleteFamily:
+  #   name: ${self:custom.deleteFamilyName}
+  #   handler: handlers/Delete.deleteFamily
+  #   description: Lambda for deleting a family
+  #   timeout: 30
+  #   events:
+  #     - http:
+  #         path: /family/{familyId}
+  #         method: delete
+  #         private: true
+  # getFamilyPhoto:
+  #   name: ${self:custom.getFamilyPhotoName}
+  #   handler: handlers/GetPhoto.getPhotoByFamilyId
+  #   description: Lambda for getting family photo
+  #   timeout: 30
+  #   events:
+  #     - http:
+  #         path: /family/{familyId}/photo
+  #         method: get
+  #         private: true
 
 resources:
   Resources:
