@@ -52,7 +52,7 @@ module.exports = {
           return resolve(item);
         })
         .catch((err) => {
-          return reject('Error putting document to dynamo. ' + err.message);
+          return reject('Error putting document to dynamo. ', err);
         });
     });
   },
@@ -79,31 +79,7 @@ module.exports = {
           return resolve();
         })
         .catch((err) => {
-          return reject('Error putting list of documents(batch) to dynamo. ' + err.message);
-        });
-    });
-  },
-
-  list: async (tableName) => {
-    return new Promise(function(resolve, reject) {
-      var docClient = init.dynamodb();
-
-      var params = {
-        TableName: tableName
-      };
-
-      docClient
-        .scan(params)
-        .promise()
-        .then((res) => {
-          if (!res || !res.Items) {
-            return reject('List did not return in expected format: ' + JSON.stringify(res));
-          }
-          return resolve(res.Items);
-        })
-        .catch((err) => {
-          console.log(err.message);
-          return reject('Error getting document from dynamo. ' + err.message);
+          return reject('Error putting list of documents(batch) to dynamo. ', err);
         });
     });
   },

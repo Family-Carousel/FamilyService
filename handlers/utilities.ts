@@ -1,20 +1,17 @@
+import { ProxyResult } from 'aws-lambda';
+
 module.exports = function () {
 
-    const buildResponse = (statusCode, body) => {
+    const buildResponse = (statusCode: number, body: string): ProxyResult => {
         return {
             isBase64Encoded: false,
             statusCode: statusCode,
             headers: { 'Access-Control-Allow-Origin': '*'},
-            body: JSON.stringify(body)
+            body: body
         }
-    }
-
-    const parseErrorMessage = (err) => {
-        return err.message || err;
     }
 
     return {
         buildResponse: buildResponse,
-        parseErrorMessage: parseErrorMessage
     }
 }();
