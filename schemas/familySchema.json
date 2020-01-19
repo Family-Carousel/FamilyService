@@ -1,14 +1,16 @@
 {
     "type": "object",
     "properties": {
-        "FamilyId": { "type": "string" },
+        "Id": { "type": "string" },
         "MemberId": { "type": "string" },
         "Name": { "type": "string" },
+        "Description": { "type": "string" },
+        "Size": { "type": "string"},
         "IsActive": { "type": "integer" },
         "CreatedBy": { "type": "string" },
         "CreatedDateTime": { "type": "string" },
         "LastUpdateBy": { "type": "string" },
         "LastUpdateDateTime": { "type": "string" }
     },
-    "required": ["FamilyId", "MemberId", "Name", "IsActive"]
+    "required": ["Id", "MemberId", "Name", "IsActive"]
 }

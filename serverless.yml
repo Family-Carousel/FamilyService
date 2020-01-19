@@ -79,7 +79,6 @@ custom:
 plugins:
   - serverless-offline
   - serverless-domain-manager
-  - serverless-webpack
   - serverless-plugin-typescript
 
 package: 

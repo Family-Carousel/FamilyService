@@ -1,8 +1,5 @@
-'use script';
-
 import { IFamily } from '../interfaces/IFamily';
-
-const familyRepo = require('../dataSources/family-repository');
+import { familyRepo } from '../dataSources/family-repository';
 const Ajv = require('ajv');
 
 class FamilyService {
