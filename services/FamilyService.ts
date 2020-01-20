@@ -1,13 +1,11 @@
 import { IFamily } from '../interfaces/IFamily';
 import { familyRepo } from '../dataSources/family-repository';
-const Ajv = require('ajv');
+import { caseTsJsonValidator } from '../schemas/familySchema';
+import * as shortid from 'shortid';
 
 class FamilyService {
     
     public async createFamily(familyData: IFamily) {
-        const shortid = require('shortid');
-        const familySchema = require('../schemas/familySchema');
-
         if (!familyData) {
             return;
         }
@@ -16,11 +14,10 @@ class FamilyService {
         familyData.IsActive = 1;
 
         try {
-            const ajv = new Ajv();
-            let valid = ajv.validate(familySchema, familyData);
+            let valid = caseTsJsonValidator(familyData);
 
             if (!valid) {
-                console.log('Creating Family - Invalid Family Format: ', ajv.errorsText());
+                console.log('Creating Family - Invalid Family Format');
                 throw new Error("Creating Family - Invalid Family Format");
             }
         } catch (err) {

@@ -1,8 +1,7 @@
-import 'source-map-support/register'
-import { APIGatewayEvent, Context, ProxyResult } from 'aws-lambda';
+import { APIGatewayEvent, ProxyResult } from 'aws-lambda';
 
 import { utilities } from '../handlers/utilities';
-import { familyService } from '../services/familyService';
+import { familyService } from '../services/FamilyService';
 import { IFamily } from '../interfaces/IFamily';
 
 let familyData: IFamily;
@@ -10,7 +9,6 @@ let serverReturn: IFamily;
 
 export const createFamily = async (
     event: APIGatewayEvent,
-    context: Context
 ): Promise<ProxyResult> => {
     try {
         if (!event.body) {
