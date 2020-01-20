@@ -1,6 +1,6 @@
 import { APIGatewayEvent, ProxyResult } from 'aws-lambda';
 
-import { utilities } from '../handlers/utilities';
+import { utilities } from './utilities';
 import { familyService } from '../services/FamilyService';
 import { IFamily } from '../interfaces/IFamily';
 

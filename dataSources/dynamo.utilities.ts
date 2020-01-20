@@ -16,14 +16,7 @@ interface IParamsObject {
 
 class DynamoUtilities {
 
-  public docClient: DocumentClient;
-
-  constructor() {
-    // super();
-    this.docClient = new DocumentClient();
-  }
-
-  private ParamsObjectFactory(tableName: string, hashName: string, hashValue: string, indexName: string | null = null, 
+  private ParamsObjectFactory(tableName: string, hashName: string, hashValue: string, indexName: string | null = null,
     rangeName: string | null = null, rangeValue: string | null = null): DocumentClient.QueryInput {
     let paramsObject: IParamsObject = {
       TableName: tableName,
@@ -46,12 +39,14 @@ class DynamoUtilities {
     return paramsObject;
   }
 
-  public Query(tableName: string, hashName: string, hashValue: string, indexName: string | null = null, 
+  public Query(tableName: string, hashName: string, hashValue: string, indexName: string | null = null,
     rangeName: string | null = null, rangeValue: string | null = null): Promise<DocumentClient.QueryOutput> {
     const queryObj: DocumentClient.QueryInput = this.ParamsObjectFactory(tableName, hashName, hashValue, indexName, rangeName, rangeValue);
+    
+    let docClient = new DocumentClient();
 
-    return new Promise(function(resolve, reject) {
-      this.docClient
+    return new Promise(function (resolve, reject) {
+      docClient
         .query(queryObj)
         .promise()
         .then((res: DocumentClient.QueryOutput) => resolve(res))
@@ -60,14 +55,15 @@ class DynamoUtilities {
   }
 
   public PutItem(tableName: string, item: IFamily) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
 
       var params: DocumentClient.PutItemInput = {
         TableName: tableName,
         Item: item
       };
+      let docClient = new DocumentClient();
 
-      this.docClient
+      docClient
         .put(params)
         .promise()
         .then(() => resolve(item))
