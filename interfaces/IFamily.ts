@@ -3,7 +3,7 @@ export interface IFamily {
     MemberId: string;
     Name: string;
     Description: string;
-    Size: string;
+    Size: number;
     IsActive: number;
     CreatedBy: string;
     CreatedDateTime: string;

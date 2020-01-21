@@ -1,7 +1,7 @@
 import { IFamily } from '../interfaces/IFamily';
+import { Family } from '../models/Family';
 import { familyRepo } from '../dataSources/family-repository';
 import { caseTsJsonValidator } from '../schemas/familySchema';
-import { generate } from "shortid";
 
 class FamilyService {
     
@@ -10,11 +10,10 @@ class FamilyService {
             return;
         }
 
-        familyData.Id = generate();
-        familyData.IsActive = 1;
+        const newFamily = new Family(familyData);
 
         try {
-            let valid = caseTsJsonValidator(familyData);
+            let valid = caseTsJsonValidator(newFamily);
 
             if (!valid) {
                 console.log('Creating Family - Invalid Family Format');
@@ -26,7 +25,7 @@ class FamilyService {
         }
 
         try {
-            const response = await familyRepo.saveFamily(familyData);
+            const response = await familyRepo.SaveFamily(newFamily);
             return response;
         } catch (err) {
             console.error('Failed to save family to data table: ', err);

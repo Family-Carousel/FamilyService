@@ -1,0 +1,38 @@
+import { generate } from "shortid";
+import { IFamily } from '../interfaces/IFamily';
+
+var currentDate = new Date(Date.now()).toISOString();
+
+export class Family implements IFamily {
+    Id: string;
+    MemberId: string;
+    Name: string;
+    Description: string;
+    Size: number;
+    IsActive: number;
+    CreatedBy: string;
+    CreatedDateTime: string;
+    LastUpdateBy: string;
+    LastUpdateDateTime: string;
+    constructor({
+        Id,
+        MemberId,
+        Name,
+        Description,
+        Size,
+        IsActive,
+        CreatedBy,
+        CreatedDateTime
+    }: IFamily) {
+        this.Id = Id || generate();
+        this.MemberId = MemberId;
+        this.Name = Name;
+        this.Description = Description;
+        this.Size = Size;
+        this.IsActive = IsActive ? 1 : 0;
+        this.CreatedBy = CreatedBy || MemberId;
+        this.CreatedDateTime = CreatedDateTime || currentDate;
+        this.LastUpdateBy = MemberId;
+        this.LastUpdateDateTime = currentDate;
+    }
+};
