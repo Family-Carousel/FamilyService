@@ -2,7 +2,7 @@
 import { DynamoUtils } from './dynamo.utilities';
 import { IFamily } from '../interfaces/IFamily';
 // import { map } from 'lodash';
-const tableName = process.env.FAMILY_TABLE;
+const tableName: string = process.env.FAMILY_TABLE || 'devFamilyTable';
 
 // TODO: Convert for batch put of family's if ever needed
 // function buildPutRequestItemListOfTemplates(templateItemList, newTemplateName) {
@@ -53,35 +53,43 @@ const tableName = process.env.FAMILY_TABLE;
 
 class FamilyRepo {
 
-    public async saveFamily(familyData: IFamily) {
+    public async SaveFamily(familyData: IFamily) {
         try {
-            const response = await DynamoUtils.PutItem(tableName!, familyData);
+            const response = await DynamoUtils.PutItem(tableName, familyData);
             return response;
         } catch (err) {
             console.error('Error updating family via Dynamo: ', err);
             throw new Error('Error updating family via Dynamo');
         }
     }
+
+    public async DeleteFamily(familyId: string) {
+        try {
+            const response = await DynamoUtils.DeleteItem(tableName, familyId);
+            return response;
+        } catch (err) {
+            console.error('Error updating family via Dynamo: ', err);
+            throw new Error('Error updating family via Dynamo');
+        }
+    }
+
+    public async GetFamilyById(id: string) {
+        try {
+            return await DynamoUtils.Query(tableName, 'Id', id);
+        } catch (err) {
+            console.error('Error getting family by id via Dynamo: ' + err);
+            throw ('Error getting family');
+        }
+    }
+
+    public async ListFamilyByMemberId(memberId: string) {
+        try {
+            return await DynamoUtils.Query(tableName, 'MemberId', memberId, 'MemberId_IDX');
+        } catch (err) {
+            console.error('Error listing familys by memberId via Dynamo: ' + err);
+            throw ('Error listing familys by memberId');
+        }
+    }
 }
 
 export const familyRepo = new FamilyRepo();
-
-// module.exports = {
-//     getFamilyById: async (FamilyId) => {
-//         try {
-//             return await dynamoUtils.getByHashKey(tableName, { FamilyId: FamilyId });
-//         } catch(err) {
-//             console.error('Error getting family by id via Dynamo: ' + err);
-//             throw('Error getting family');
-//         }
-//     },
-//     listFamilysByMemberId: async (memberId) => {
-//         try {
-//             let qobj = dynamoUtils.paramsObjectFactory(tableName, "MemberId_IDX", "MemberId", memberId);
-//             return await dynamoUtils.query(qobj);
-//         } catch(err) {
-//             console.error('Error listing familys by memberId via Dynamo: ' + err);
-//             throw('Error listing familys by memberId');
-//         }
-//     }
-// };

@@ -72,6 +72,24 @@ class DynamoUtilities {
     });
   }
 
+  public DeleteItem(tableName: string, id: string) {
+    return new Promise(function (resolve, reject) {
+
+      var params: DocumentClient.DeleteItemInput = {
+        TableName: tableName,
+        Key: { Id: id }
+      };
+
+      const docClient = new DocumentClient();
+
+      docClient
+        .delete(params)
+        .promise()
+        .then(() => resolve())
+        .catch((err: AWSError) => reject('Error deleting document to dynamo: ' + err));
+    });
+  }
+
   // public BatchPutItem(tableName: string, itemList) {
   //   return new Promise(function(resolve, reject) {
   //     let ddb = new DynamoDB();
