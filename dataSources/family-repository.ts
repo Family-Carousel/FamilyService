@@ -1,12 +1,12 @@
 'use strict';
 import { DynamoUtils } from './dynamo.utilities';
 import { IFamily } from '../interfaces/IFamily';
+// import { map } from 'lodash';
 const tableName = process.env.FAMILY_TABLE;
-// const _ = require('lodash');
 
 // TODO: Convert for batch put of family's if ever needed
 // function buildPutRequestItemListOfTemplates(templateItemList, newTemplateName) {
-//     let updatedTemplates = _.map(templateItemList, (t) => {
+//     let updatedTemplates = map(templateItemList, (t) => {
 //       let newPutRequestObject = {
 //         LastUpdateBy: { S: t.LastUpdateBy.toString() },
 //         IsTrackingPixel: { N: t.IsTrackingPixel.toString() },
