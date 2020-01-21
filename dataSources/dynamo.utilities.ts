@@ -61,6 +61,7 @@ class DynamoUtilities {
         TableName: tableName,
         Item: item
       };
+      
       let docClient = new DocumentClient();
 
       docClient

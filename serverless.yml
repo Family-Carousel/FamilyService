@@ -75,6 +75,9 @@ custom:
     certificateName: ${self:custom.FamilyServiceCertMap.${self:provider.stage}}
     createRoute53Record: true
     endpointType: 'regional'
+  webpack:
+    webpackConfig: ./webpack.config.js 
+    includeModules: true
 
 plugins:
   - serverless-offline

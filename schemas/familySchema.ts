@@ -23,5 +23,5 @@ export function caseTsJsonValidator(data: IFamily) {
         return data;
     }
 
-    throw new Error(`Invalid ${parser.getErrors()}`);
+    throw new Error(`Invalid ${JSON.stringify(parser.getErrors())}`);
 }

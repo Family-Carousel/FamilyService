@@ -1,7 +1,7 @@
 import { IFamily } from '../interfaces/IFamily';
 import { familyRepo } from '../dataSources/family-repository';
 import { caseTsJsonValidator } from '../schemas/familySchema';
-// import * as shortid from 'shortid';
+import { generate } from "shortid";
 
 class FamilyService {
     
@@ -10,21 +10,20 @@ class FamilyService {
             return;
         }
 
-        // familyData.Id = shortid.generate();
-        familyData.Id = "1"
+        familyData.Id = generate();
         familyData.IsActive = 1;
 
-        // try {
-        //     let valid = caseTsJsonValidator(familyData);
+        try {
+            let valid = caseTsJsonValidator(familyData);
 
-        //     if (!valid) {
-        //         console.log('Creating Family - Invalid Family Format');
-        //         throw new Error("Creating Family - Invalid Family Format");
-        //     }
-        // } catch (err) {
-        //     console.error('Failed to perform validation on family data: ', err);
-        //     throw new Error('Failed to perform validation on family data');
-        // }
+            if (!valid) {
+                console.log('Creating Family - Invalid Family Format');
+                throw new Error("Creating Family - Invalid Family Format");
+            }
+        } catch (err) {
+            console.error('Failed to perform validation on family data: ', err);
+            throw new Error('Failed to perform validation on family data');
+        }
 
         try {
             const response = await familyRepo.saveFamily(familyData);
