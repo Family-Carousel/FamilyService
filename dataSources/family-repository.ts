@@ -1,4 +1,3 @@
-'use strict';
 import { DynamoUtils } from './dynamo.utilities';
 import { IFamily } from '../interfaces/IFamily';
 const tableName: string = process.env.FAMILY_TABLE || 'devFamilyTable';

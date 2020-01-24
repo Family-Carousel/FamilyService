@@ -54,7 +54,7 @@ class DynamoUtilities {
     });
   }
 
-  public PutItem(tableName: string, item: IFamily) {
+  public PutItem(tableName: string, item: IFamily): Promise<IFamily> {
     return new Promise(function (resolve, reject) {
 
       var params: DocumentClient.PutItemInput = {
@@ -72,7 +72,7 @@ class DynamoUtilities {
     });
   }
 
-  public DeleteItem(tableName: string, id: string) {
+  public DeleteItem(tableName: string, id: string): Promise<void> {
     return new Promise(function (resolve, reject) {
 
       var params: DocumentClient.DeleteItemInput = {
@@ -90,6 +90,7 @@ class DynamoUtilities {
     });
   }
 
+  // TODO: Figure out how to type this function
   // public BatchPutItem(tableName: string, itemList) {
   //   return new Promise(function(resolve, reject) {
   //     let ddb = new DynamoDB();
