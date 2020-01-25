@@ -9,10 +9,12 @@ export const getFamilyById = async (
     event: APIGatewayEvent,
 ): Promise<ProxyResult> => {
     try {
-        const id = event.pathParameters.id;
-        if (!id) {
+        if(!event || !event.pathParameters || !event.pathParameters.id) {
             return utilities.BuildResponse(400, JSON.stringify('Id for family was not provided'));
         }
+
+        const id = event.pathParameters.id;
+
         familyReturn = await familyService.GetFamilyById(id);
 
         if (!familyReturn) {
