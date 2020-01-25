@@ -1,5 +1,6 @@
 export interface IMember {
     Id: string;
+    FamilyId: string;
     UserId?: string;
     FirstName: string;
     LastName: string;

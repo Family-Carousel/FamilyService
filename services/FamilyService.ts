@@ -34,20 +34,24 @@ class FamilyService {
             throw new Error('Failed to save family to data table');
         }
     }
+
+    public async GetFamilyById(id: string) {
+        if (!id) {
+            return;
+        }
+
+        try {
+            const family = familyRepo.GetFamilyById(id);
+            return family;
+        } catch(err) {
+            console.error('Failed to get family by id: ', err);
+            throw new Error('Failed to get family by id');
+        }
+    }
 }
 
 export const familyService = new FamilyService();
 
-// module.exports = {
-//     getFamilyByFamilyId: async (FamilyId) => {
-//         try {
-//             const family = await dynamo.getFamilyById(FamilyId);
-//             return family;
-//         } catch (err) {
-//             console.error("Error: " + err);
-//             throw("Failed to get Family");
-//         }
-//     },
 //     listFamilysByMemberId: async (memberId) => {
 //         try {
 //             const family = await dynamo.listFamilysByMemberId(memberId);
