@@ -1,8 +1,6 @@
 import { generate } from "shortid";
 import { IFamily } from '../interfaces/IFamily';
 
-var currentDate = new Date(Date.now()).toISOString();
-
 export class Family implements IFamily {
     Id: string;
     MemberId: string;
@@ -31,8 +29,8 @@ export class Family implements IFamily {
         this.Size = Size;
         this.IsActive = IsActive ? 1 : 0;
         this.CreatedBy = CreatedBy || MemberId;
-        this.CreatedDateTime = CreatedDateTime || currentDate;
+        this.CreatedDateTime = CreatedDateTime || new Date(Date.now()).toISOString();
         this.LastUpdateBy = MemberId;
-        this.LastUpdateDateTime = currentDate;
+        this.LastUpdateDateTime = new Date(Date.now()).toISOString();
     }
 };

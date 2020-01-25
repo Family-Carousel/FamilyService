@@ -28,17 +28,17 @@ class FamilyRepo {
         try {
             return await DynamoUtils.Query(tableName, 'Id', id);
         } catch (err) {
-            console.error('Error getting family by id via Dynamo: ' + err);
-            throw ('Error getting family');
+            console.error('Error getting family by id via Dynamo: ', err);
+            throw new Error('Error getting family');
         }
     }
 
-    public async ListFamilyByMemberId(memberId: string) {
+    public async ListMemberOfFamilyByCompositKey(familyId: string, memberId: string) {
         try {
-            return await DynamoUtils.Query(tableName, 'MemberId', memberId, 'MemberId_IDX');
+            return await DynamoUtils.Query(tableName, 'FamilyId', familyId, null, 'MemberId', memberId);
         } catch (err) {
-            console.error('Error listing familys by memberId via Dynamo: ' + err);
-            throw ('Error listing familys by memberId');
+            console.error('Error listing member of family: ', err);
+            throw new Error('Error listing member of family');
         }
     }
 }

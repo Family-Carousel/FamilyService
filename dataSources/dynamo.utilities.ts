@@ -1,6 +1,7 @@
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { AWSError } from 'aws-sdk';
 import { IFamily } from '../interfaces/IFamily';
+import { IMember } from '../interfaces/IMember';
 
 interface IExpressionAttributeValues {
   ':hashKeyValue': string;
@@ -54,7 +55,7 @@ class DynamoUtilities {
     });
   }
 
-  public PutItem(tableName: string, item: IFamily): Promise<IFamily> {
+  public PutItem(tableName: string, item: IFamily | IMember): Promise<IFamily | IMember> {
     return new Promise(function (resolve, reject) {
 
       var params: DocumentClient.PutItemInput = {
