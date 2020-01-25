@@ -1,9 +1,10 @@
 export interface IMember {
     Id: string;
+    UserId?: string;
     FirstName: string;
     LastName: string;
     DateOfBirth: string;
-    ManagedUser: boolean;
+    ManagedUser: number;
     EmailAddress: string;
     Age: number;
     CreateBy: string;

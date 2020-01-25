@@ -1,36 +1,38 @@
 import { generate } from "shortid";
 import { IFamily } from '../interfaces/IFamily';
+import { IMember } from '../interfaces/IMember';
 
 export class Family implements IFamily {
     Id: string;
-    MemberId: string;
     Name: string;
     Description: string;
+    Members: IMember[];
     Size: number;
     IsActive: number;
     CreatedBy: string;
-    CreatedDateTime: string;
+    CreateDateTime: string;
     LastUpdateBy: string;
     LastUpdateDateTime: string;
     constructor({
         Id,
-        MemberId,
         Name,
+        UserId,
+        Members,
         Description,
         Size,
         IsActive,
         CreatedBy,
-        CreatedDateTime
+        CreateDateTime
     }: IFamily) {
         this.Id = Id || generate();
-        this.MemberId = MemberId;
         this.Name = Name;
         this.Description = Description;
+        this.Members = Members || [];
         this.Size = Size;
         this.IsActive = IsActive ? 1 : 0;
-        this.CreatedBy = CreatedBy || MemberId;
-        this.CreatedDateTime = CreatedDateTime || new Date(Date.now()).toISOString();
-        this.LastUpdateBy = MemberId;
+        this.CreatedBy = CreatedBy || UserId!;
+        this.CreateDateTime = CreateDateTime || new Date(Date.now()).toISOString();
+        this.LastUpdateBy = UserId!;
         this.LastUpdateDateTime = new Date(Date.now()).toISOString();
     }
 };

@@ -5,7 +5,7 @@ export class Member implements IMember {
     FirstName: string;
     LastName: string;
     DateOfBirth: string;
-    ManagedUser: boolean;
+    ManagedUser: number;
     EmailAddress: string;
     Age: number;
     CreateBy: string;
@@ -14,24 +14,26 @@ export class Member implements IMember {
     LastUpdateDateTime: string;
     constructor({
         Id,
-        MemberId,
-        Name,
-        Description,
-        Size,
-        IsActive,
-        CreatedBy,
-        CreatedDateTime
+        UserId,
+        FirstName,
+        LastName,
+        DateOfBirth,
+        ManagedUser,
+        EmailAddress,
+        Age,
+        CreateBy,
+        CreateDateTime
     }: IMember) {
         this.Id = Id;
-        this.FirstName = MemberId;
-        this.LastName = Name;
-        this.DateOfBirth = Description;
+        this.FirstName = FirstName;
+        this.LastName = LastName;
+        this.DateOfBirth = DateOfBirth;
         this.ManagedUser = ManagedUser ? 1 : 0;
         this.EmailAddress = EmailAddress;
         this.Age = Age;
-        this.CreatedBy = CreatedBy || MemberId;
-        this.CreatedDateTime = CreatedDateTime || new Date(Date.now()).toISOString();
-        this.LastUpdateBy = MemberId;
+        this.CreateBy = CreateBy || UserId!;
+        this.CreateDateTime = CreateDateTime || new Date(Date.now()).toISOString();
+        this.LastUpdateBy = UserId!;
         this.LastUpdateDateTime = new Date(Date.now()).toISOString();
     }
 };
