@@ -10,6 +10,8 @@ class FamilyService {
             return;
         }
 
+        familyData.IsActive = true;
+
         const newFamily = new Family(familyData);
 
         try {

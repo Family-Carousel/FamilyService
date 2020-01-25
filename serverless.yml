@@ -33,12 +33,12 @@ provider:
       Action:   
         - "dynamodb:*"
       Resource: 
-        - { "Fn::GetAtt": ["MEMBERTABLE", "Arn"] }
         - { "Fn::GetAtt": ["FAMILYTABLE", "Arn"] }
+        - { "Fn::GetAtt": ["MEMBERTABLE", "Arn"] }
         - Fn::Join:
           - "/"
           - 
-            - { "Fn::GetAtt": ["FAMILYTABLE", "Arn"] }
+            - { "Fn::GetAtt": ["MEMBERTABLE", "Arn"] }
             - "index/*"
     - Effect: "Allow"
       Action:
@@ -158,12 +158,12 @@ resources:
         AttributeDefinitions:
           - AttributeName: Id
             AttributeType: S
-          - AttributeName: MemberId
+          - AttributeName: FamilyCreator
             AttributeType: S
         KeySchema:
           - AttributeName: Id
             KeyType: HASH
-          - AttributeName: MemberId
+          - AttributeName: FamilyCreator
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
     MEMBERTABLE:

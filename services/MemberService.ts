@@ -3,9 +3,9 @@ import { Member } from '../models/Member';
 import { memberRepo } from '../dataSources/member-repository';
 import { caseTsJsonValidator } from '../schemas/memberSchema';
 
-class FamilyService {
+class MemberService {
     
-    public async createFamily(memberData: IMember) {
+    public async createMember(memberData: IMember) {
         if (!memberData) {
             return;
         }
@@ -34,4 +34,4 @@ class FamilyService {
     }
 }
 
-export const familyService = new FamilyService();
+export const memberService = new MemberService();
