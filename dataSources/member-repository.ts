@@ -43,4 +43,4 @@ class MemberRepo {
     }
 }
 
-export const femberRepo = new MemberRepo();
+export const memberRepo = new MemberRepo();
