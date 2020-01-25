@@ -30,7 +30,7 @@ export class Member implements IMember {
         this.FirstName = FirstName;
         this.LastName = LastName;
         this.DateOfBirth = DateOfBirth;
-        this.ManagedUser = ManagedUser ? 1 : 0;
+        this.ManagedUser = this.ValidateManagedUser(ManagedUser, DateOfBirth);
         this.EmailAddress = EmailAddress;
         this.Age = this.DetermineAge(DateOfBirth);
         this.CreateBy = CreateBy || UserId!;
@@ -48,5 +48,16 @@ export class Member implements IMember {
             age--;
         }
         return age;
+    }
+
+    private ValidateManagedUser(managedUser: number | boolean, dateOfBirth: string): number {
+        const age = this.DetermineAge(dateOfBirth);
+
+        if (age <= 11) {
+            return 1;
+        } else {
+            return managedUser ? 1 : 0;
+        }
+
     }
 };

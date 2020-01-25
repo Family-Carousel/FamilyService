@@ -1,13 +1,12 @@
 import { generate } from "shortid";
 import { IFamily } from '../interfaces/IFamily';
-import { IMember } from '../interfaces/IMember';
 
 export class Family implements IFamily {
     Id: string;
     Name: string;
     FamilyCreator: string;
     Description: string;
-    Members: IMember[];
+    Members: [];
     Size: number;
     IsActive: number;
     CreateBy: string;

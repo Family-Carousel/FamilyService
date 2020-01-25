@@ -1,11 +1,9 @@
-import { IMember } from './IMember';
-
 export interface IFamily {
     Id: string;
     Name: string;
     FamilyCreator: string;
     UserId?:string;
-    Members?: IMember[]
+    Members?: []
     Description: string;
     Size: number;
     IsActive: number | boolean;

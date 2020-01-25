@@ -53,6 +53,7 @@ custom:
   createMemberName: ${self:custom.shortName}-${self:custom.serviceName}-CreateMember-${self:provider.stage}
   listFamiliesByMemberIdName: ${self:custom.shortName}-${self:custom.serviceName}-ListFamiliesByMemberId-${self:provider.stage}
   getFamilyByIdName: ${self:custom.shortName}-${self:custom.serviceName}-GetFamilyById-${self:provider.stage}
+  getMemberByIdName: ${self:custom.shortName}-${self:custom.serviceName}-GetMemberById-${self:provider.stage}
   updateFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-UpdateFamily-${self:provider.stage}
   deleteFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-DeleteFamily-${self:provider.stage}
   getFamilyPhotoName: ${self:custom.shortName}-${self:custom.serviceName}-GetFamilyPhoto-${self:provider.stage}
@@ -109,7 +110,7 @@ functions:
           path: /member
           method: post
           private: true
-  getFamily:
+  getFamilyById:
     name: ${self:custom.getFamilyByIdName}
     handler: handlers/Read.getFamilyById
     description: Lambda for getting a family by its id
@@ -117,6 +118,16 @@ functions:
     events:
       - http:
           path: /family/{id}
+          method: get
+          private: true
+  getMemberById:
+    name: ${self:custom.getMemberByIdName}
+    handler: handlers/Read.getMemberById
+    description: Lambda for getting a member by its id
+    timeout: 30
+    events:
+      - http:
+          path: /member/{id}
           method: get
           private: true
   # listFamiliesByMemberId:
