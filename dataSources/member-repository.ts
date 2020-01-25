@@ -39,7 +39,11 @@ class MemberRepo {
 
     public async ListMembersByFamilyId(familyId: string) {
         try {
-            return await DynamoUtils.Query(tableName, 'FamilyId', familyId, 'FamilyId_IDX');
+            const members = await DynamoUtils.Query(tableName, 'FamilyId', familyId, 'FamilyId_IDX');
+            if(members && members.Items && members.Items.length > 0) {
+                return members;
+            }
+            return;
         } catch (err) {
             console.error('Error listing members by memberId via Dynamo: ', err);
             throw new Error('Error listing members by memberId');

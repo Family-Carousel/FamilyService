@@ -34,14 +34,18 @@ class MemberService {
         }
     }
 
-    public async MapMembersToFamily(family: IFamily) {
+    public async MapMembersToFamily(family: IFamily): Promise<IFamily> {
         const members = await memberRepo.ListMembersByFamilyId(family.Id);
 
         if (members && members.Items && members.Items.length > 0) {
             for (let m = 0; m <= members.Items.length; m++) {
-                family.Members?.push(members.Items[m]);
+                if (members.Items[m]) {
+                    family.Members?.push(members.Items[m]);
+                }
             }
         }
+
+        return family;
     }
 }
 
