@@ -29,9 +29,8 @@ class FamilyRepo {
             const family = await DynamoUtils.Query(tableName, 'Id', id);
             if (family && family.Items && family.Items.length > 0) {
                 return family.Items[0];
-            } else {
-                return;
             }
+            return;
         } catch (err) {
             console.error('Error getting family by id via Dynamo: ', err);
             throw new Error('Error getting family');

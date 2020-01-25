@@ -2,6 +2,7 @@ import { IMember } from '../interfaces/IMember';
 import { Member } from '../models/Member';
 import { memberRepo } from '../dataSources/member-repository';
 import { caseTsJsonValidator } from '../schemas/memberSchema';
+import { IFamily } from '../interfaces/IFamily';
 
 class MemberService {
     
@@ -30,6 +31,16 @@ class MemberService {
         } catch (err) {
             console.error('Failed to save member to data table: ', err);
             throw new Error('Failed to save member to data table');
+        }
+    }
+
+    public async MapMembersToFamily(family: IFamily) {
+        const members = await memberRepo.ListMembersByFamilyId(family.Id);
+
+        if (members && members.Items && members.Items.length > 0) {
+            for (let m = 0; m <= members.Items.length; m++) {
+                family.Members?.push(members.Items[m]);
+            }
         }
     }
 }

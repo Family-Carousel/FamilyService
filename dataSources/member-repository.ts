@@ -26,7 +26,11 @@ class MemberRepo {
 
     public async GetMemberById(id: string) {
         try {
-            return await DynamoUtils.Query(tableName, 'Id', id);
+            const member = await DynamoUtils.Query(tableName, 'Id', id);
+            if(member && member.Items && member.Items.length > 0) {
+                return member.Items[0];
+            }
+            return;
         } catch (err) {
             console.error('Error getting member by id via Dynamo: ', err);
             throw new Error('Error getting member');
