@@ -33,12 +33,17 @@ provider:
       Action:   
         - "dynamodb:*"
       Resource: 
-        - { "Fn::GetAtt": ["FAMILYTABLE", "Arn"] }
         - { "Fn::GetAtt": ["MEMBERTABLE", "Arn"] }
         - Fn::Join:
           - "/"
           - 
             - { "Fn::GetAtt": ["MEMBERTABLE", "Arn"] }
+            - "index/*"
+        - { "Fn::GetAtt": ["FAMILYTABLE", "Arn"] }
+        - Fn::Join:
+          - "/"
+          - 
+            - { "Fn::GetAtt": ["FAMILYTABLE", "Arn"] }
             - "index/*"
     - Effect: "Allow"
       Action:
@@ -195,9 +200,14 @@ resources:
         KeySchema:
           - AttributeName: Id
             KeyType: HASH
-          - AttributeName: FamilyCreator
-            KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
+        GlobalSecondaryIndexes:
+          - IndexName: FamilyCreator_IDX
+            KeySchema:
+              - AttributeName: FamilyCreator
+                KeyType: HASH
+            Projection:
+              ProjectionType: "ALL"
     MEMBERTABLE:
       Type: AWS::DynamoDB::Table
       Properties: 

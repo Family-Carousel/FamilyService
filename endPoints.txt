@@ -1,0 +1,16 @@
+EndPoints
+	Family
+		Create Family 					POST 	/family					    Done
+		get Family by Id 				Get 	/family/{id}			    Done
+		get all Families				Get		/family					    Not Doing Because it uses SCAN. Costly
+		Update Family 					PUT 	/family/{id}			    Done
+		Delete Family 					Delete 	/family/{id}			    Done
+		
+	MemberId
+		Create Member					POST	/member					    Done
+		get member by id				Get		/member/{id}		
+		get all families for MemberId	Get		/member/{id}/family
+		Update Member					PUT		/member/{id}	
+		Update Member for family		PUT		/member/{id}/family/{id}	
+		Delete Member from family		Delete	/member/{id}/family/{id}					
+		Delete member from all families	Delete	/member/{id}

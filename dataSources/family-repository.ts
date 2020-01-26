@@ -37,12 +37,12 @@ class FamilyRepo {
         }
     }
 
-    public async ListMemberOfFamilyByCompositKey(familyId: string, memberId: string) {
+    public async ListAllFamilysForMember(memberId: string) {
         try {
-            return await DynamoUtils.Query(tableName, 'FamilyId', familyId, null, 'MemberId', memberId);
+            return await DynamoUtils.Query(tableName, 'MemberId', memberId);
         } catch (err) {
-            console.error('Error listing member of family: ', err);
-            throw new Error('Error listing member of family');
+            console.error('Error listing families for member: ', err);
+            throw new Error('Error listing families for member');
         }
     }
 }
