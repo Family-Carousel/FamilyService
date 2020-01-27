@@ -59,6 +59,7 @@ custom:
   getFamilyByIdName: ${self:custom.shortName}-${self:custom.serviceName}-GetFamilyById-${self:provider.stage}
   getMemberByIdName: ${self:custom.shortName}-${self:custom.serviceName}-GetMemberById-${self:provider.stage}
   listAllMembersForFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-ListAllMembersForFamily-${self:provider.stage}
+  listAllFamiliesForMemberName: ${self:custom.shortName}-${self:custom.serviceName}-ListAllFamiliesForMember-${self:provider.stage}
   updateFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-UpdateFamily-${self:provider.stage}
   deleteFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-DeleteFamily-${self:provider.stage}
   getFamilyPhotoName: ${self:custom.shortName}-${self:custom.serviceName}-GetFamilyPhoto-${self:provider.stage}
@@ -143,6 +144,16 @@ functions:
     events:
       - http:
           path: /family/{id}/member
+          method: get
+          private: true
+  listAllFamiliesForMember:
+    name: ${self:custom.listAllFamiliesForMemberName}
+    handler: handlers/Read.listAllFamilysForMember
+    description: Lambda for getting a member by its id
+    timeout: 30
+    events:
+      - http:
+          path: /member/{id}/family
           method: get
           private: true
   # listFamiliesByMemberId:

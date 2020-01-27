@@ -1,5 +1,6 @@
 import { DynamoUtils } from './dynamo.utilities';
 import { IFamily } from '../interfaces/IFamily';
+import { IMember } from '../interfaces/IMember';
 const tableName: string = process.env.FAMILY_TABLE || 'devFamilyTable';
 
 class FamilyRepo {

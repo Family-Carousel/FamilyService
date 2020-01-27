@@ -35,17 +35,24 @@ class MemberService {
     }
 
     public async MapMembersToFamily(family: IFamily): Promise<IFamily> {
-        const members = await memberRepo.ListMembersByFamilyId(family.Id);
+        // TODO: maps multiple families to multiple members. figure this out.
+        console.log(family)
+        try {
+            const members = await memberRepo.ListMembersByFamilyId(family.Id);
 
-        if (members && members.Items && members.Items.length > 0) {
-            for (let m = 0; m <= members.Items.length; m++) {
-                if (members.Items[m]) {
-                    family.Members?.push(members.Items[m]);
+            if (members && members.Items && members.Items.length > 0) {
+                for (let m = 0; m <= members.Items.length; m++) {
+                    if (members.Items[m]) {
+                        family.Members?.push(members.Items[m]);
+                    }
                 }
             }
+    
+            return family;
+        } catch (err) {
+            console.error('Failed to map members to family: ', err);
+            throw new Error('Failed to map members to family');
         }
-
-        return family;
     }
 
     public async GetMemberById(id: string) {
@@ -73,6 +80,20 @@ class MemberService {
         } catch (err) {
             console.error('Failed to get members by familyId: ', err);
             throw new Error('Failed to get members by familyId');
+        }
+    }
+
+    public async ListAllMembers(id: string) {
+        if (!id) {
+            return;
+        }
+
+        try {
+            const members = memberRepo.ListMemberById(id);
+            return members;
+        } catch (err) {
+            console.error('Failed to get members by memberId: ', err);
+            throw new Error('Failed to get members by memberId');
         }
     }
 }

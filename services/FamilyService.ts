@@ -48,6 +48,24 @@ class FamilyService {
             throw new Error('Failed to get family by id');
         }
     }
+
+    public async ListFamilysForEachMember(members) {
+        if (!members && members.length < 1) {
+            return;
+        }
+
+        let familys = [];
+        try {
+            for (let m = 0; m < members.length; m ++) {
+                let family = await this.GetFamilyById(members[m].FamilyId);
+                familys.push(family);
+            }
+            return familys;
+        } catch (err) {
+            console.error('Error listing families for members: ', err);
+            throw new Error('Error listing families for members');
+        }        
+    }
 }
 
 export const familyService = new FamilyService();

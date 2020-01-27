@@ -37,6 +37,19 @@ class MemberRepo {
         }
     }
 
+    public async ListMemberById(id: string) {
+        try {
+            const member = await DynamoUtils.Query(tableName, 'Id', id);
+            if(member && member.Items && member.Items.length > 0) {
+                return member.Items;
+            }
+            return;
+        } catch (err) {
+            console.error('Error getting member by id via Dynamo: ', err);
+            throw new Error('Error getting member');
+        }
+    }
+
     public async ListMembersByFamilyId(familyId: string) {
         try {
             const members = await DynamoUtils.Query(tableName, 'FamilyId', familyId, 'FamilyId_IDX');

@@ -14,7 +14,7 @@ export const getFamilyById = async (
 
         const id = event.pathParameters.id;
 
-        let familyReturn = await familyService.GetFamilyById(id);
+        const familyReturn = await familyService.GetFamilyById(id);
 
         if (!familyReturn) {
             return utilities.BuildResponse(404, JSON.stringify('Family does not exist'));
@@ -89,13 +89,25 @@ export const listAllFamilysForMember = async (
 
         const id = event.pathParameters.id;
 
-        const response = await memberService.GetMemberById(id);
+        const response = await memberService.ListAllMembers(id);
 
         if (!response) {
-            return utilities.BuildResponse(404, JSON.stringify('Member does not exist'));
+            return utilities.BuildResponse(404, JSON.stringify('No Members Found'));
         }
 
-        return utilities.BuildResponse(201, JSON.stringify(response));
+        const families = await familyService.ListFamilysForEachMember(response);
+
+        if (!families) {
+            return utilities.BuildResponse(404, JSON.stringify('No Families Found Matching any members'));
+        }
+
+        const familyWithMembers = await memberService.MapMembersToFamily(families);
+
+        if (!familyWithMembers) {
+            return utilities.BuildResponse(404, JSON.stringify('Family does not exist'));
+        }
+
+        return utilities.BuildResponse(201, JSON.stringify(familyWithMembers));
     } catch (err) {
         console.error('Family Service Get a member error: ', err);
         return utilities.BuildResponse(500, JSON.stringify('Family Service internal server error'));
