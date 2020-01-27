@@ -41,7 +41,7 @@ class MemberRepo {
         try {
             const members = await DynamoUtils.Query(tableName, 'FamilyId', familyId, 'FamilyId_IDX');
             if(members && members.Items && members.Items.length > 0) {
-                return members;
+                return members.Items;
             }
             return;
         } catch (err) {

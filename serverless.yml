@@ -56,9 +56,9 @@ custom:
   serviceName: FamilyService
   createFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-CreateFamily-${self:provider.stage}
   createMemberName: ${self:custom.shortName}-${self:custom.serviceName}-CreateMember-${self:provider.stage}
-  listFamiliesByMemberIdName: ${self:custom.shortName}-${self:custom.serviceName}-ListFamiliesByMemberId-${self:provider.stage}
   getFamilyByIdName: ${self:custom.shortName}-${self:custom.serviceName}-GetFamilyById-${self:provider.stage}
   getMemberByIdName: ${self:custom.shortName}-${self:custom.serviceName}-GetMemberById-${self:provider.stage}
+  listAllMembersForFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-ListAllMembersForFamily-${self:provider.stage}
   updateFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-UpdateFamily-${self:provider.stage}
   deleteFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-DeleteFamily-${self:provider.stage}
   getFamilyPhotoName: ${self:custom.shortName}-${self:custom.serviceName}-GetFamilyPhoto-${self:provider.stage}
@@ -133,6 +133,16 @@ functions:
     events:
       - http:
           path: /member/{id}
+          method: get
+          private: true
+  listAllMembersForFamily:
+    name: ${self:custom.listAllMembersForFamilyName}
+    handler: handlers/Read.listAllMembersForFamily
+    description: Lambda for getting a member by its id
+    timeout: 30
+    events:
+      - http:
+          path: /family/{id}/member
           method: get
           private: true
   # listFamiliesByMemberId:
@@ -220,12 +230,16 @@ resources:
         KeySchema:
           - AttributeName: Id
             KeyType: HASH
+          - AttributeName: FamilyId
+            KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
         GlobalSecondaryIndexes:
           - IndexName: FamilyId_IDX
             KeySchema:
               - AttributeName: FamilyId
                 KeyType: HASH
+              - AttributeName: Id
+                KeyType: RANGE
             Projection:
               ProjectionType: "ALL"
     FAMILYPHOTOBUCKET:

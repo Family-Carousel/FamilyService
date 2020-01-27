@@ -61,6 +61,20 @@ class MemberService {
             throw new Error('Failed to get member by id');
         }
     }
+
+    public async ListAllMembersByFamilyId(id: string) {
+        if (!id) {
+            return;
+        }
+
+        try {
+            const members = memberRepo.ListMembersByFamilyId(id);
+            return members;
+        } catch (err) {
+            console.error('Failed to get members by familyId: ', err);
+            throw new Error('Failed to get members by familyId');
+        }
+    }
 }
 
 export const memberService = new MemberService();

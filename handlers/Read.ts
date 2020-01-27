@@ -26,9 +26,32 @@ export const getFamilyById = async (
             return utilities.BuildResponse(404, JSON.stringify('Family does not exist'));
         }
 
-        return utilities.BuildResponse(201, JSON.stringify(familyWithMembers));
+        return utilities.BuildResponse(200, JSON.stringify(familyWithMembers));
     } catch (err) {
         console.error('Family Service Get a family error: ', err);
+        return utilities.BuildResponse(500, JSON.stringify('Family Service internal server error'));
+    }
+}
+
+export const listAllMembersForFamily = async (
+    event: APIGatewayEvent,
+): Promise<ProxyResult> => {
+    try {
+        if (!event || !event.pathParameters || !event.pathParameters.id) {
+            return utilities.BuildResponse(400, JSON.stringify('Id for family was not provided'));
+        }
+
+        const id = event.pathParameters.id;
+        // query family ID from member table
+        const memberReturn = await memberService.ListAllMembersByFamilyId(id);
+
+        if (!memberReturn) {
+            return utilities.BuildResponse(404, JSON.stringify('Family has no members'));
+        }
+
+        return utilities.BuildResponse(200, JSON.stringify(memberReturn));
+    } catch (err) {
+        console.error('Family Service list all members in family error: ', err);
         return utilities.BuildResponse(500, JSON.stringify('Family Service internal server error'));
     }
 }
@@ -49,7 +72,7 @@ export const getMemberById = async (
             return utilities.BuildResponse(404, JSON.stringify('Member does not exist'));
         }
 
-        return utilities.BuildResponse(201, JSON.stringify(memberReturn));
+        return utilities.BuildResponse(200, JSON.stringify(memberReturn));
     } catch (err) {
         console.error('Family Service Get a member error: ', err);
         return utilities.BuildResponse(500, JSON.stringify('Family Service internal server error'));
