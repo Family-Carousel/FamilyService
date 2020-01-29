@@ -6,11 +6,7 @@ import { IFamily } from '../interfaces/IFamily';
 
 class MemberService {
 
-    public async createMember(memberData: IMember) {
-        if (!memberData) {
-            return;
-        }
-
+    public async createMember(memberData: IMember): Promise<IMember> {
         const newMember = new Member(memberData);
 
         try {
@@ -27,7 +23,7 @@ class MemberService {
 
         try {
             const response = await memberRepo.SaveMember(newMember);
-            return response;
+            return response as IMember;
         } catch (err) {
             console.error('Failed to save member to data table: ', err);
             throw new Error('Failed to save member to data table');
