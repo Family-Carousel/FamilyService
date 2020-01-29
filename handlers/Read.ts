@@ -1,5 +1,4 @@
 import { APIGatewayEvent, ProxyResult } from 'aws-lambda';
-
 import { utilities } from './utilities';
 import { familyService } from '../services/FamilyService';
 import { memberService } from '../services/MemberService';
@@ -42,7 +41,7 @@ export const listAllMembersForFamily = async (
         }
 
         const id = event.pathParameters.id;
-        // query family ID from member table
+        
         const memberReturn = await memberService.ListAllMembersByFamilyId(id);
 
         if (!memberReturn) {
@@ -101,13 +100,13 @@ export const listAllFamilysForMember = async (
             return utilities.BuildResponse(404, JSON.stringify('No Families Found Matching any members'));
         }
 
-        const familyWithMembers = await memberService.MapMembersToFamily(families);
+        const familyWithMembers = await memberService.MapMembersToFamilyList(families);
 
         if (!familyWithMembers) {
             return utilities.BuildResponse(404, JSON.stringify('Family does not exist'));
         }
 
-        return utilities.BuildResponse(201, JSON.stringify(familyWithMembers));
+        return utilities.BuildResponse(200, JSON.stringify(familyWithMembers));
     } catch (err) {
         console.error('Family Service Get a member error: ', err);
         return utilities.BuildResponse(500, JSON.stringify('Family Service internal server error'));

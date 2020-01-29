@@ -5,7 +5,7 @@ import { caseTsJsonValidator } from '../schemas/memberSchema';
 import { IFamily } from '../interfaces/IFamily';
 
 class MemberService {
-    
+
     public async createMember(memberData: IMember) {
         if (!memberData) {
             return;
@@ -35,8 +35,6 @@ class MemberService {
     }
 
     public async MapMembersToFamily(family: IFamily): Promise<IFamily> {
-        // TODO: maps multiple families to multiple members. figure this out.
-        console.log(family)
         try {
             const members = await memberRepo.ListMembersByFamilyId(family.Id);
 
@@ -47,11 +45,36 @@ class MemberService {
                     }
                 }
             }
-    
+
             return family;
         } catch (err) {
             console.error('Failed to map members to family: ', err);
             throw new Error('Failed to map members to family');
+        }
+    }
+
+    public async MapMembersToFamilyList(familyList: IFamily[]): Promise<IFamily[]> {
+        // TODO: maps multiple families to multiple members. figure this out.
+        console.log(familyList);
+        try {
+
+            for (let f = 0; f < familyList.length; f++) {
+                const members = await memberRepo.ListMembersByFamilyId(familyList[f].Id);
+
+                if (members && members.length > 0) {
+                    for (let m = 0; m <= members.length; m++) {
+                        if (members[m]) {
+                            familyList[f].Members?.push(members[m]);
+                        }
+                    }
+                }
+            }
+
+            console.log(familyList);
+            return familyList;
+        } catch (err) {
+            console.error('Failed to map members to family list: ', err);
+            throw new Error('Failed to map members to family list');
         }
     }
 
@@ -63,7 +86,7 @@ class MemberService {
         try {
             const member = memberRepo.GetMemberById(id);
             return member;
-        } catch(err) {
+        } catch (err) {
             console.error('Failed to get member by id: ', err);
             throw new Error('Failed to get member by id');
         }
