@@ -10,7 +10,7 @@ EndPoints
 	Member
 		Create Member					POST	/member					    Done
 		get member by id				Get		/member/{id}				Done
-		list all families for MemberId	Get		/member/{id}/family			
+		list all families for MemberId	Get		/member/{id}/family			Done	
 		Update Member					PUT		/member/{id}	
 		Update Member for family		PUT		/member/{id}/family/{id}	
 		Delete Member from family		Delete	/member/{id}/family/{id}					
