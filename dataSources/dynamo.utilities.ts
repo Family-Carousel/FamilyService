@@ -73,13 +73,20 @@ class DynamoUtilities {
     });
   }
 
-  public DeleteItem(tableName: string, id: string): Promise<void> {
+  public DeleteItem(tableName: string, id: string, rangeName: string | null = null, rangeId: string | null = null): Promise<void> {
     return new Promise(function (resolve, reject) {
 
       var params: DocumentClient.DeleteItemInput = {
         TableName: tableName,
         Key: { Id: id }
       };
+
+      if (rangeName && rangeId) {
+        params = {
+          TableName: tableName,
+          Key: { Id: id, rangeName: rangeId }          
+        }
+      }
 
       const docClient = new DocumentClient();
 

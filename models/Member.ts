@@ -52,7 +52,7 @@ export class Member implements IMember {
 
     private ValidateManagedUser(managedUser: number | boolean, dateOfBirth: string): number {
         const age = this.DetermineAge(dateOfBirth);
-
+        // User is forced to be a managed user if not at least 12 years of age
         if (age <= 11) {
             return 1;
         } else {

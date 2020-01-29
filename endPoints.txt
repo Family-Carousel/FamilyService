@@ -1,17 +1,17 @@
 EndPoints
 	Family
-		Create Family 					POST 	/family					    Done
-		get Family by Id 				Get 	/family/{id}			    Done
-		list all Families				Get		/family					    Not Doing Because it uses SCAN. Costly
-		list all members for family		Get		/family/{id}/member			Done
+		Create Family 					POST 	/family					    	Done
+		get Family by Id 				Get 	/family/{id}			    	Done
+		list all Families				Get		/family					    	Not Doing Because it uses SCAN. Costly
+		list all members for family		Get		/family/{id}/member				Done
 		Update Family 					PUT 	/family/{id}			    
-		Delete Family 					Delete 	/family/{id}			    
+		Delete Family 					Delete 	/family/{id}			    	Done
 		
 	Member
-		Create Member					POST	/member					    Done
-		get member by id				Get		/member/{id}				Done
-		list all families for MemberId	Get		/member/{id}/family			Done	
+		Create Member					POST	/member					    	Done
+		get member by id				Get		/member/{id}					Done
+		list all families for MemberId	Get		/member/{id}/family				Done	
 		Update Member					PUT		/member/{id}	
-		Update Member for family		PUT		/member/{id}/family/{id}	
-		Delete Member from family		Delete	/member/{id}/family/{id}					
+		Update Member for family		PUT		/member/{id}/family/{familyId}	
+		Delete Member from family		Delete	/member/{id}/family/{familyId}					
 		Delete member from all families	Delete	/member/{id}

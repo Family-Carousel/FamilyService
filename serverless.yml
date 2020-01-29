@@ -62,6 +62,7 @@ custom:
   listAllFamiliesForMemberName: ${self:custom.shortName}-${self:custom.serviceName}-ListAllFamiliesForMember-${self:provider.stage}
   updateFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-UpdateFamily-${self:provider.stage}
   deleteFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-DeleteFamily-${self:provider.stage}
+  deleteMemberFromFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-DeleteMemberFromFamily-${self:provider.stage}
   getFamilyPhotoName: ${self:custom.shortName}-${self:custom.serviceName}-GetFamilyPhoto-${self:provider.stage}
   FamilyPhotoBucketName: familycarousel-familyservice-photo-bucket-${self:provider.stage}
   serverless-offline:
@@ -155,6 +156,27 @@ functions:
       - http:
           path: /member/{id}/family
           method: get
+          private: true
+
+  deleteFamily:
+    name: ${self:custom.deleteFamilyName}
+    handler: handlers/Delete.deleteFamily
+    description: Lambda for deleting a family by its id
+    timeout: 30
+    events:
+      - http:
+          path: /family/{id}
+          method: delete
+          private: true
+  deleteMemberFromFamily:
+    name: ${self:custom.deleteMemberFromFamilyName}
+    handler: handlers/Delete.deleteMemberFromFamily
+    description: Lambda for deleting a member from a certain family
+    timeout: 30
+    events:
+      - http:
+          path: /member/{id}/family/{familyId}
+          method: delete
           private: true
   # listFamiliesByMemberId:
   #   name: ${self:custom.listFamiliesByMemberIdName}

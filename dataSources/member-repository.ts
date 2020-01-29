@@ -24,6 +24,16 @@ class MemberRepo {
         }
     }
 
+    public async DeleteMemberInSingleFamily(memberId: string, familyId: string | null = null) {
+        try {
+            const response = await DynamoUtils.DeleteItem(tableName, memberId, 'FamilyId' , familyId);
+            return response;
+        } catch (err) {
+            console.error('Error deleting Member via Dynamo: ', err);
+            throw new Error('Error deleting Member via Dynamo');
+        }
+    }
+
     public async GetMemberById(id: string) {
         try {
             const member = await DynamoUtils.Query(tableName, 'Id', id);

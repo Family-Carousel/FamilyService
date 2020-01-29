@@ -66,6 +66,20 @@ class FamilyService {
             throw new Error('Error listing families for members');
         }        
     }
+
+    public async DeleteFamily(id: string): Promise<boolean> {
+        if (!id) {
+            return false;
+        }
+
+        try {
+            await familyRepo.DeleteFamily(id);
+            return true;
+        } catch (err) {
+            console.error('Error Deleting family: ', err);
+            throw new Error('Error Deleting family');
+        }
+    }
 }
 
 export const familyService = new FamilyService();

@@ -119,6 +119,36 @@ class MemberService {
             throw new Error('Failed to get members by memberId');
         }
     }
+
+    public async DeleteMemberList(members: IMember[]): Promise<boolean> {
+        if (!members) {
+            return false;
+        }
+
+        try {
+            for(let m = 0; m < members.length; m++) {
+                await memberRepo.DeleteMember(members[m].Id);
+            }
+            return true;
+        } catch (err) {
+            console.error('Failed to delete list of members: ', err);
+            throw new Error('Failed to delete list of members');
+        }
+    }
+
+    public async DeleteMember(member: IMember): Promise<boolean> {
+        if (!member) {
+            return false;
+        }
+
+        try {
+            await memberRepo.DeleteMemberInSingleFamily(member.Id, member.FamilyId);
+            return true;
+        } catch (err) {
+            console.error('Failed to delete member: ', err);
+            throw new Error('Failed to delete member');
+        }
+    }
 }
 
 export const memberService = new MemberService();
