@@ -6,11 +6,7 @@ import { caseTsJsonValidator } from '../schemas/familySchema';
 
 class FamilyService {
     
-    public async createFamily(familyData: IFamily) {
-        if (!familyData) {
-            return;
-        }
-
+    public async createFamily(familyData: IFamily): Promise<IFamily> {
         familyData.IsActive = true;
 
         const newFamily = new Family(familyData);
@@ -29,7 +25,7 @@ class FamilyService {
 
         try {
             const response = await familyRepo.SaveFamily(newFamily);
-            return response;
+            return response as IFamily;
         } catch (err) {
             console.error('Failed to save family to data table: ', err);
             throw new Error('Failed to save family to data table');
@@ -77,15 +73,6 @@ class FamilyService {
 
 export const familyService = new FamilyService();
 
-//     listFamilysByMemberId: async (memberId) => {
-//         try {
-//             const family = await dynamo.listFamilysByMemberId(memberId);
-//             return family;
-//         } catch (err) {
-//             console.error("Error: " + err);
-//             throw("Failed to get Family by memberId");
-//         }
-//     },
 //     updateFamily: async (familyData) => {
 //         const familySchema = require("../schemas/familySchema");
 
@@ -110,16 +97,3 @@ export const familyService = new FamilyService();
 //             throw("Failed to update family");
 //         }
 //     },
-//     deleteFamily: async (familyId) => {
-//         try {
-//             const family = await dynamo.getFamilyById(familyId);
-//             family.IsActive = 0;
-
-//             const dynamoResponse = await dynamo.saveFamily(family);
-//             return dynamoResponse;
-//         } catch (err) {
-//             console.error("Family inactive error/Delete error: " + err);
-//             throw("Error deleting family");
-//         }
-//     }
-// };
