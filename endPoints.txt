@@ -13,5 +13,5 @@ EndPoints
 		list all families for MemberId	Get		/member/{id}/family				Done	
 		Update Member					PUT		/member/{id}	
 		Update Member for family		PUT		/member/{id}/family/{familyId}	
-		Delete Member from family		Delete	/member/{id}/family/{familyId}					
+		Delete Member from family		Delete	/member/{id}/family/{familyId}	Done				
 		Delete member from all families	Delete	/member/{id}

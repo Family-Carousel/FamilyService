@@ -1,4 +1,5 @@
 import { IFamily } from '../interfaces/IFamily';
+import { IMember } from '../interfaces/IMember';
 import { Family } from '../models/Family';
 import { familyRepo } from '../dataSources/family-repository';
 import { caseTsJsonValidator } from '../schemas/familySchema';
@@ -35,32 +36,24 @@ class FamilyService {
         }
     }
 
-    public async GetFamilyById(id: string) {
-        if (!id) {
-            return;
-        }
-
+    public async GetFamilyById(id: string): Promise<IFamily> {
         try {
             const family = familyRepo.GetFamilyById(id);
-            return family;
+            return family as Promise<IFamily>;
         } catch(err) {
             console.error('Failed to get family by id: ', err);
             throw new Error('Failed to get family by id');
         }
     }
 
-    public async ListFamilysForEachMember(members) {
-        if (!members && members.length < 1) {
-            return;
-        }
-
-        let familys = [];
+    public async ListFamilysForEachMember(members: IMember[]): Promise<IFamily[]> {
+        let familys: IFamily[] = [];
         try {
             for (let m = 0; m < members.length; m ++) {
                 let family = await this.GetFamilyById(members[m].FamilyId);
-                familys.push(family);
+                familys.push(family as IFamily);
             }
-            return familys;
+            return familys as IFamily[];
         } catch (err) {
             console.error('Error listing families for members: ', err);
             throw new Error('Error listing families for members');

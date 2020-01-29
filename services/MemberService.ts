@@ -38,10 +38,10 @@ class MemberService {
         try {
             const members = await memberRepo.ListMembersByFamilyId(family.Id);
 
-            if (members && members.Items && members.Items.length > 0) {
-                for (let m = 0; m <= members.Items.length; m++) {
-                    if (members.Items[m]) {
-                        family.Members?.push(members.Items[m]);
+            if (members && members.length > 0) {
+                for (let m = 0; m <= members.length; m++) {
+                    if (members[m]) {
+                        family.Members?.push(members[m] as IMember);
                     }
                 }
             }
@@ -54,23 +54,19 @@ class MemberService {
     }
 
     public async MapMembersToFamilyList(familyList: IFamily[]): Promise<IFamily[]> {
-        // TODO: maps multiple families to multiple members. figure this out.
-        console.log(familyList);
         try {
-
             for (let f = 0; f < familyList.length; f++) {
                 const members = await memberRepo.ListMembersByFamilyId(familyList[f].Id);
 
                 if (members && members.length > 0) {
                     for (let m = 0; m <= members.length; m++) {
                         if (members[m]) {
-                            familyList[f].Members?.push(members[m]);
+                            familyList[f].Members?.push(members[m] as IMember);
                         }
                     }
                 }
             }
 
-            console.log(familyList);
             return familyList;
         } catch (err) {
             console.error('Failed to map members to family list: ', err);
@@ -78,42 +74,30 @@ class MemberService {
         }
     }
 
-    public async GetMemberById(id: string) {
-        if (!id) {
-            return;
-        }
-
+    public async GetMemberById(id: string): Promise<IMember> {
         try {
             const member = memberRepo.GetMemberById(id);
-            return member;
+            return member as Promise<IMember>;
         } catch (err) {
             console.error('Failed to get member by id: ', err);
             throw new Error('Failed to get member by id');
         }
     }
 
-    public async ListAllMembersByFamilyId(id: string) {
-        if (!id) {
-            return;
-        }
-
+    public async ListAllMembersByFamilyId(id: string): Promise<IMember[]> {
         try {
             const members = memberRepo.ListMembersByFamilyId(id);
-            return members;
+            return members as Promise<IMember[]>;
         } catch (err) {
             console.error('Failed to get members by familyId: ', err);
             throw new Error('Failed to get members by familyId');
         }
     }
 
-    public async ListAllMembers(id: string) {
-        if (!id) {
-            return;
-        }
-
+    public async ListAllMembers(id: string): Promise<IMember[]> {
         try {
             const members = memberRepo.ListMemberById(id);
-            return members;
+            return members as  Promise<IMember[]>;
         } catch (err) {
             console.error('Failed to get members by memberId: ', err);
             throw new Error('Failed to get members by memberId');
