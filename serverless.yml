@@ -62,6 +62,7 @@ custom:
   listAllFamiliesForMemberName: ${self:custom.shortName}-${self:custom.serviceName}-ListAllFamiliesForMember-${self:provider.stage}
   updateFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-UpdateFamily-${self:provider.stage}
   deleteFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-DeleteFamily-${self:provider.stage}
+  deleteMemberName: ${self:custom.shortName}-${self:custom.serviceName}-DeleteMember-${self:provider.stage}
   deleteMemberFromFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-DeleteMemberFromFamily-${self:provider.stage}
   getFamilyPhotoName: ${self:custom.shortName}-${self:custom.serviceName}-GetFamilyPhoto-${self:provider.stage}
   FamilyPhotoBucketName: familycarousel-familyservice-photo-bucket-${self:provider.stage}
@@ -166,6 +167,16 @@ functions:
     events:
       - http:
           path: /family/{id}
+          method: delete
+          private: true
+  deleteMember:
+    name: ${self:custom.deleteMemberName}
+    handler: handlers/Delete.deleteMember
+    description: Lambda for deleting a member by its id
+    timeout: 30
+    events:
+      - http:
+          path: /member/{id}
           method: delete
           private: true
   deleteMemberFromFamily:

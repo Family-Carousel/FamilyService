@@ -77,3 +77,33 @@ export const deleteMemberFromFamily = async (
         return utilities.BuildResponse(500, JSON.stringify('Family Service internal server error'));
     }
 }
+
+export const deleteMember = async (
+    event: APIGatewayEvent,
+): Promise<ProxyResult> => {
+    try {
+        if (!event || !event.pathParameters || !event.pathParameters.id) {
+            return utilities.BuildResponse(400, JSON.stringify('Id for member was not provided'));
+        }
+
+        const id = event.pathParameters.id;
+
+        const members = await memberService.ListAllMembers(id);
+
+        if (!members) {
+            return utilities.BuildResponse(404, JSON.stringify('id for member not valid'));
+        }
+
+        const memberDeleted = await memberService.DeleteMemberList(members);
+
+        if (!memberDeleted) {
+            return utilities.BuildResponse(400, JSON.stringify('Failed to delete member'));
+        }
+
+        return utilities.BuildResponse(200, JSON.stringify('Successfully Deleted member from family'));
+    } catch (err) {
+        console.error('Family Service Delete a family error: ', err);
+        return utilities.BuildResponse(500, JSON.stringify('Family Service internal server error'));
+    }
+}
+

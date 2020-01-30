@@ -101,10 +101,6 @@ class MemberService {
     }
 
     public async DeleteMemberList(members: IMember[]): Promise<boolean> {
-        if (!members) {
-            return false;
-        }
-
         try {
             for(let m = 0; m < members.length; m++) {
                 await memberRepo.DeleteMember(members[m].Id);
@@ -117,10 +113,6 @@ class MemberService {
     }
 
     public async DeleteMember(member: IMember): Promise<boolean> {
-        if (!member) {
-            return false;
-        }
-
         try {
             await memberRepo.DeleteMemberInSingleFamily(member.Id, member.FamilyId);
             return true;
