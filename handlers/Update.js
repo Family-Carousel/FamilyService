@@ -3,8 +3,6 @@
 const utils = require('../handlers/utilities');
 const familyService = require('../services/FamilyService');
 
-const env = process.env.NODE_ENV;
-
 module.exports = {
 
     updateFamily: async (event) => {
