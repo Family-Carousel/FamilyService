@@ -64,7 +64,7 @@ custom:
   deleteFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-DeleteFamily-${self:provider.stage}
   deleteMemberName: ${self:custom.shortName}-${self:custom.serviceName}-DeleteMember-${self:provider.stage}
   deleteMemberFromFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-DeleteMemberFromFamily-${self:provider.stage}
-  getFamilyPhotoName: ${self:custom.shortName}-${self:custom.serviceName}-GetFamilyPhoto-${self:provider.stage}
+  # getFamilyPhotoName: ${self:custom.shortName}-${self:custom.serviceName}-GetFamilyPhoto-${self:provider.stage}
   FamilyPhotoBucketName: familycarousel-familyservice-photo-bucket-${self:provider.stage}
   serverless-offline:
     host: 0.0.0.0
@@ -189,36 +189,16 @@ functions:
           path: /member/{id}/family/{familyId}
           method: delete
           private: true
-  # listFamiliesByMemberId:
-  #   name: ${self:custom.listFamiliesByMemberIdName}
-  #   handler: handlers/List.listFamilyByMemberId
-  #   description: Lambda for listing all familys by memberId in the family service
-  #   timeout: 30
-  #   events:
-  #     - http:
-  #         path: /family
-  #         method: get
-  #         private: true
-  # getFamily:
-  #   name: ${self:custom.getFamilyByIdName}
-  #   handler: handlers/List.getFamilyByFamilyId
-  #   description: Lambda for getting a family by its id
-  #   timeout: 30
-  #   events:
-  #     - http:
-  #         path: /family/{familyId}
-  #         method: get
-  #         private: true
-  # updateFamily:
-  #   name: ${self:custom.updateFamilyName}
-  #   handler: handlers/Update.updateFamily
-  #   description: Lambda for updating a family
-  #   timeout: 30
-  #   events:
-  #     - http:
-  #         path: /family
-  #         method: put
-  #         private: true
+  updateFamily:
+    name: ${self:custom.updateFamilyName}
+    handler: handlers/Update.updateFamily
+    description: Lambda for updating a family
+    timeout: 30
+    events:
+      - http:
+          path: /family/{id}
+          method: put
+          private: true
   # deleteFamily:
   #   name: ${self:custom.deleteFamilyName}
   #   handler: handlers/Delete.deleteFamily

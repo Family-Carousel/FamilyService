@@ -73,6 +73,10 @@ class FamilyService {
     public async UpdateFamily(currentFamily: IFamily, newFamilyData: IFamily): Promise<IFamily> {
         const updateFamily = new Family(newFamilyData);
 
+        if (updateFamily === currentFamily) {
+            throw new Error('Update not needed, Current Matches new data');
+        }
+
         try {
             let valid = caseTsJsonValidator(updateFamily);
 
@@ -96,12 +100,3 @@ class FamilyService {
 }
 
 export const familyService = new FamilyService();
-
-//         try {
-//             const dynamoResponse = await dynamo.saveFamily(familyData);
-//             return dynamoResponse;
-//         } catch (err) {
-//             console.error("Updating family error: " + err);
-//             throw("Failed to update family");
-//         }
-//     },

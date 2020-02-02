@@ -24,7 +24,7 @@ export const updateFamily = async (
             return utilities.BuildResponse(400, JSON.stringify('Id mismatch. Id in Body must match Id in Path'));
         }
 
-        const currentFamily = familyService.GetFamilyById(id);
+        let currentFamily = await familyService.GetFamilyById(id);
 
         if (!currentFamily) {
             return utilities.BuildResponse(404, JSON.stringify('Family does not exist. Is your Id wrong?'));
@@ -36,7 +36,7 @@ export const updateFamily = async (
             return utilities.BuildResponse(404, JSON.stringify('Family update not successful'));
         }
 
-        return utilities.BuildResponse(200, updatedFamily);
+        return utilities.BuildResponse(200, JSON.stringify(updatedFamily));
     } catch (err) {
         console.error('Family Service family update failure: ' + err);
         return utilities.BuildResponse(400, 'Family Service family update failure');
