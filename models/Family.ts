@@ -17,7 +17,6 @@ export class Family implements IFamily {
         Id,
         Name,
         UserId,
-        Members,
         Description,
         Size,
         IsActive,
@@ -28,7 +27,7 @@ export class Family implements IFamily {
         this.Name = Name;
         this.FamilyCreator = UserId!;
         this.Description = Description;
-        this.Members = Members || [];
+        this.Members = [];
         this.Size = Size;
         this.IsActive = IsActive ? 1 : 0;
         this.CreateBy = CreateBy || UserId!;

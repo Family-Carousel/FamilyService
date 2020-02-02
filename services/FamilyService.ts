@@ -34,8 +34,8 @@ class FamilyService {
 
     public async GetFamilyById(id: string): Promise<IFamily> {
         try {
-            const family = familyRepo.GetFamilyById(id);
-            return family as Promise<IFamily>;
+            const family = await familyRepo.GetFamilyById(id);
+            return family as IFamily;
         } catch(err) {
             console.error('Failed to get family by id: ', err);
             throw new Error('Failed to get family by id');
@@ -69,25 +69,33 @@ class FamilyService {
             throw new Error('Error Deleting family');
         }
     }
+
+    public async UpdateFamily(currentFamily: IFamily, newFamilyData: IFamily): Promise<IFamily> {
+        const updateFamily = new Family(newFamilyData);
+
+        try {
+            let valid = caseTsJsonValidator(updateFamily);
+
+            if (!valid) {
+                console.log('Updating Family - Invalid Family Format');
+                throw new Error("Updating Family - Invalid Family Format");
+            }
+        } catch (err) {
+            console.error('Failed to perform validation on family data: ', err);
+            throw new Error('Failed to perform validation on family data');
+        }
+
+        try {
+            const response = await familyRepo.SaveFamily(updateFamily);
+            return response as IFamily;
+        } catch (err) {
+            console.error('Failed to save family to data table: ', err);
+            throw new Error('Failed to save family to data table');
+        }
+    }
 }
 
 export const familyService = new FamilyService();
-
-//     updateFamily: async (familyData) => {
-//         const familySchema = require("../schemas/familySchema");
-
-//         try {
-//             const ajv = new Ajv();
-//             let valid = ajv.validate(familySchema, familyData);
-
-//             if (!valid) {
-//                 console.error("Updating Family - Invalid Family Format: " + ajv.errorsText());
-//                 throw("Updating Family - Invalid Family Format");
-//             }
-//         } catch (err) {
-//             console.error("Error Validating Family Data: " + err);
-//             throw("Error validating family data");
-//         }
 
 //         try {
 //             const dynamoResponse = await dynamo.saveFamily(familyData);
