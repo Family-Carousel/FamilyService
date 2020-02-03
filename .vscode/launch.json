@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "SLS Lambda",
+            "type": "node",
+            "request": "launch",
+            "runtimeArgs": ["--inspect", "--debug-port=9229"],
+            "program": "${workspaceFolder}/node_modules/serverless/bin/serverless",
+            "args": ["offline", "--noAuth"],
+            "port": 9229,
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "vscode-jest-tests",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/node_modules/jest/bin/jest",
+            "args": ["--runInBand"],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "disableOptimisticBPs": true
+        }
+    ]
+}

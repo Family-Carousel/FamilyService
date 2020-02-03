@@ -8,6 +8,8 @@ provider:
   memorySize: 128
   logRetentionInDays: 3
   stage: ${opt:stage, 'dev'}
+  apiGateway: 
+    minimumCompressionSize: 1024
   apiKeys: 
     - FamilyCarousel-FamilyService-${self:provider.stage}
   usagePlan:
@@ -21,6 +23,7 @@ provider:
     NODE_ENV: ${self:provider.stage}
     FAMILY_TABLE: ${self:custom.familyTableNameMap.${self:provider.stage}}
     MEMBER_TABLE: ${self:custom.memberTableNameMap.${self:provider.stage}}
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -31,6 +34,11 @@ provider:
         - "dynamodb:*"
       Resource: 
         - { "Fn::GetAtt": ["MEMBERTABLE", "Arn"] }
+        - Fn::Join:
+          - "/"
+          - 
+            - { "Fn::GetAtt": ["MEMBERTABLE", "Arn"] }
+            - "index/*"
         - { "Fn::GetAtt": ["FAMILYTABLE", "Arn"] }
         - Fn::Join:
           - "/"
@@ -47,11 +55,18 @@ custom:
   shortName: FamilyCarousel
   serviceName: FamilyService
   createFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-CreateFamily-${self:provider.stage}
-  listFamiliesByMemberIdName: ${self:custom.shortName}-${self:custom.serviceName}-ListFamiliesByMemberId-${self:provider.stage}
+  createMemberName: ${self:custom.shortName}-${self:custom.serviceName}-CreateMember-${self:provider.stage}
   getFamilyByIdName: ${self:custom.shortName}-${self:custom.serviceName}-GetFamilyById-${self:provider.stage}
+  getMemberByIdName: ${self:custom.shortName}-${self:custom.serviceName}-GetMemberById-${self:provider.stage}
+  listAllMembersForFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-ListAllMembersForFamily-${self:provider.stage}
+  listAllFamiliesForMemberName: ${self:custom.shortName}-${self:custom.serviceName}-ListAllFamiliesForMember-${self:provider.stage}
   updateFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-UpdateFamily-${self:provider.stage}
+  updateMemberInFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-UpdateMemberInFamily-${self:provider.stage}
+  updateMemberGloballyName: ${self:custom.shortName}-${self:custom.serviceName}-UpdateMemberGlobally-${self:provider.stage}
   deleteFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-DeleteFamily-${self:provider.stage}
-  getFamilyPhotoName: ${self:custom.shortName}-${self:custom.serviceName}-GetFamilyPhoto-${self:provider.stage}
+  deleteMemberName: ${self:custom.shortName}-${self:custom.serviceName}-DeleteMember-${self:provider.stage}
+  deleteMemberFromFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-DeleteMemberFromFamily-${self:provider.stage}
+  # getFamilyPhotoName: ${self:custom.shortName}-${self:custom.serviceName}-GetFamilyPhoto-${self:provider.stage}
   FamilyPhotoBucketName: familycarousel-familyservice-photo-bucket-${self:provider.stage}
   serverless-offline:
     host: 0.0.0.0
@@ -72,11 +87,14 @@ custom:
     certificateName: ${self:custom.FamilyServiceCertMap.${self:provider.stage}}
     createRoute53Record: true
     endpointType: 'regional'
+  webpack:
+    webpackConfig: ./webpack.config.js 
+    includeModules: true
 
 plugins:
   - serverless-offline
   - serverless-domain-manager
-  - serverless-plugin-optimize
+  - serverless-webpack
 
 package: 
   individually: true
@@ -92,25 +110,86 @@ functions:
           path: /family
           method: post
           private: true
-  listFamiliesByMemberId:
-    name: ${self:custom.listFamiliesByMemberIdName}
-    handler: handlers/List.listFamilyByMemberId
-    description: Lambda for listing all familys by memberId in the family service
+  createMember:
+    name: ${self:custom.createMemberName}
+    handler: handlers/Create.createMember
+    description: Lambda for Creating a Member in the family service
     timeout: 30
     events:
       - http:
-          path: /family
-          method: get
+          path: /member
+          method: post
           private: true
-  getFamily:
+  getFamilyById:
     name: ${self:custom.getFamilyByIdName}
-    handler: handlers/List.getFamilyByFamilyId
+    handler: handlers/Read.getFamilyById
     description: Lambda for getting a family by its id
     timeout: 30
     events:
       - http:
-          path: /family/{familyId}
+          path: /family/{id}
           method: get
+          private: true
+  getMemberById:
+    name: ${self:custom.getMemberByIdName}
+    handler: handlers/Read.getMemberById
+    description: Lambda for getting a member by its id
+    timeout: 30
+    events:
+      - http:
+          path: /member/{id}
+          method: get
+          private: true
+  listAllMembersForFamily:
+    name: ${self:custom.listAllMembersForFamilyName}
+    handler: handlers/Read.listAllMembersForFamily
+    description: Lambda for getting a member by its id
+    timeout: 30
+    events:
+      - http:
+          path: /family/{id}/member
+          method: get
+          private: true
+  listAllFamiliesForMember:
+    name: ${self:custom.listAllFamiliesForMemberName}
+    handler: handlers/Read.listAllFamilysForMember
+    description: Lambda for getting a member by its id
+    timeout: 30
+    events:
+      - http:
+          path: /member/{id}/family
+          method: get
+          private: true
+
+  deleteFamily:
+    name: ${self:custom.deleteFamilyName}
+    handler: handlers/Delete.deleteFamily
+    description: Lambda for deleting a family by its id
+    timeout: 30
+    events:
+      - http:
+          path: /family/{id}
+          method: delete
+          private: true
+  deleteMember:
+    name: ${self:custom.deleteMemberName}
+    handler: handlers/Delete.deleteMember
+    description: Lambda for deleting a member by its id
+    timeout: 30
+    events:
+      - http:
+          path: /member/{id}
+          method: delete
+          private: true
+  deleteMemberFromFamily:
+    name: ${self:custom.deleteMemberFromFamilyName}
+    handler: handlers/Delete.deleteMemberFromFamily
+    description: Lambda for deleting a member from a certain family
+    timeout: 30
+    events:
+      - http:
+          path: /member/{id}/family/{familyId}
+          method: delete
           private: true
   updateFamily:
     name: ${self:custom.updateFamilyName}
@@ -119,28 +198,28 @@ functions:
     timeout: 30
     events:
       - http:
-          path: /family
+          path: /family/{id}
           method: put
           private: true
-  deleteFamily:
-    name: ${self:custom.deleteFamilyName}
-    handler: handlers/Delete.deleteFamily
-    description: Lambda for deleting a family
+  updateMemberForFamily:
+    name: ${self:custom.updateMemberInFamilyName}
+    handler: handlers/Update.updateMemberForFamily
+    description: Lambda for updating a member in a single family
     timeout: 30
     events:
       - http:
-          path: /family/{familyId}
-          method: delete
+          path: /member/{id}/family/{familyId}
+          method: put
           private: true
-  getFamilyPhoto:
-    name: ${self:custom.getFamilyPhotoName}
-    handler: handlers/GetPhoto.getPhotoByFamilyId
-    description: Lambda for getting family photo
+  updateMemberGlobally:
+    name: ${self:custom.updateMemberGloballyName}
+    handler: handlers/Update.updateMemberGlobally
+    description: Lambda for updating a member record for member with id in all familys
     timeout: 30
     events:
       - http:
-          path: /family/{familyId}/photo
-          method: get
+          path: /member/{id}
+          method: put
           private: true
 
 resources:
@@ -152,14 +231,19 @@ resources:
         AttributeDefinitions:
           - AttributeName: Id
             AttributeType: S
-          - AttributeName: MemberId
+          - AttributeName: FamilyCreator
             AttributeType: S
         KeySchema:
           - AttributeName: Id
             KeyType: HASH
-          - AttributeName: MemberId
-            KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
+        GlobalSecondaryIndexes:
+          - IndexName: FamilyCreator_IDX
+            KeySchema:
+              - AttributeName: FamilyCreator
+                KeyType: HASH
+            Projection:
+              ProjectionType: "ALL"
     MEMBERTABLE:
       Type: AWS::DynamoDB::Table
       Properties: 
@@ -172,12 +256,16 @@ resources:
         KeySchema:
           - AttributeName: Id
             KeyType: HASH
+          - AttributeName: FamilyId
+            KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
         GlobalSecondaryIndexes:
           - IndexName: FamilyId_IDX
             KeySchema:
               - AttributeName: FamilyId
                 KeyType: HASH
+              - AttributeName: Id
+                KeyType: RANGE
             Projection:
               ProjectionType: "ALL"
     FAMILYPHOTOBUCKET:
