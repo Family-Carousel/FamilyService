@@ -72,8 +72,18 @@ class MemberService {
 
     public async GetMemberById(id: string): Promise<IMember> {
         try {
-            const member = memberRepo.GetMemberById(id);
+            const member = await memberRepo.GetMemberById(id);
             return member as Promise<IMember>;
+        } catch (err) {
+            console.error('Failed to get member by id: ', err);
+            throw new Error('Failed to get member by id');
+        }
+    }
+
+    public async GetMemberByCompositKey(id: string, familyId: string): Promise<IMember> {
+        try {
+            const member = await memberRepo.GetMemberByCompositKey(id, familyId);
+            return member as IMember;
         } catch (err) {
             console.error('Failed to get member by id: ', err);
             throw new Error('Failed to get member by id');
@@ -93,7 +103,7 @@ class MemberService {
     public async ListAllMembers(id: string): Promise<IMember[]> {
         try {
             const members = memberRepo.ListMemberById(id);
-            return members as  Promise<IMember[]>;
+            return members as Promise<IMember[]>;
         } catch (err) {
             console.error('Failed to get members by memberId: ', err);
             throw new Error('Failed to get members by memberId');
@@ -102,7 +112,7 @@ class MemberService {
 
     public async DeleteMemberList(members: IMember[]): Promise<boolean> {
         try {
-            for(let m = 0; m < members.length; m++) {
+            for (let m = 0; m < members.length; m++) {
                 await memberRepo.DeleteMember(members[m].Id);
             }
             return true;
@@ -120,6 +130,67 @@ class MemberService {
             console.error('Failed to delete member: ', err);
             throw new Error('Failed to delete member');
         }
+    }
+
+    public async UpdateMemberForFamily(currentMember: IMember, newMemberData: IMember): Promise<IMember> {
+        const updateMember = new Member(newMemberData);
+
+        if (currentMember === updateMember) {
+            throw new Error('Update not needed, Current Matches new data');
+        }
+
+        try {
+            let valid = caseTsJsonValidator(updateMember);
+
+            if (!valid) {
+                console.log('Updating Member - Invalid Family Format');
+                throw new Error("Updating Member - Invalid Family Format");
+            }
+        } catch (err) {
+            console.error('Failed to perform validation on Member data: ', err);
+            throw new Error('Failed to perform validation on Member data');
+        }
+
+        try {
+            const response = await memberRepo.SaveMember(updateMember);
+            return response as IMember;
+        } catch (err) {
+            console.error('Failed to save family to data table: ', err);
+            throw new Error('Failed to save family to data table');
+        }
+    }
+
+    public async UpdateMemberGlobally(currentMemberList: IMember[], newMemberData: IMember): Promise<IMember[]> {
+        let updatedMemberList: IMember[] = [];
+
+        for (let m = 0; m < currentMemberList.length; m++) {
+            const updateMember = new Member(newMemberData);
+
+            updateMember.Id = currentMemberList[m].Id;
+            updateMember.FamilyId = currentMemberList[m].FamilyId;
+
+            try {
+                let valid = caseTsJsonValidator(updateMember);
+
+                if (!valid) {
+                    console.log('Updating Member List - Invalid Family Format');
+                    throw new Error("Updating Member List - Invalid Family Format");
+                }
+            } catch (err) {
+                console.error('Failed to perform validation on Member data: ', err);
+                throw new Error('Failed to perform validation on Member data');
+            }
+
+            try {
+                const response = await memberRepo.SaveMember(updateMember);
+                updatedMemberList.push(response as IMember);
+            } catch (err) {
+                console.error('Failed to save family to data table: ', err);
+                throw new Error('Failed to save family to data table');
+            }
+        }
+
+        return updatedMemberList;
     }
 }
 

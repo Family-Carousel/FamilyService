@@ -47,6 +47,19 @@ class MemberRepo {
         }
     }
 
+    public async GetMemberByCompositKey(id: string, familyId: string) {
+        try {
+            const member = await DynamoUtils.Query(tableName, 'Id', id, null, 'FamilyId', familyId);
+            if(member && member.Items && member.Items.length > 0) {
+                return member.Items[0];
+            }
+            return;
+        } catch (err) {
+            console.error('Error getting member by id and familyId via Dynamo: ', err);
+            throw new Error('Error getting member for family');
+        }
+    }
+
     public async ListMemberById(id: string) {
         try {
             const member = await DynamoUtils.Query(tableName, 'Id', id);
