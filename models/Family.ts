@@ -4,7 +4,7 @@ import { IFamily } from '../interfaces/IFamily';
 export class Family implements IFamily {
     Id: string;
     Name: string;
-    FamilyCreator: string;
+    FamilyOwner: string;
     Description: string;
     Members: [];
     Size: number;
@@ -17,6 +17,7 @@ export class Family implements IFamily {
         Id,
         Name,
         UserId,
+        FamilyOwner,
         Description,
         Size,
         IsActive,
@@ -25,7 +26,7 @@ export class Family implements IFamily {
     }: IFamily) {
         this.Id = Id || generate();
         this.Name = Name;
-        this.FamilyCreator = UserId!;
+        this.FamilyOwner =  FamilyOwner || UserId!;
         this.Description = Description;
         this.Members = [];
         this.Size = Size;

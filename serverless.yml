@@ -231,16 +231,16 @@ resources:
         AttributeDefinitions:
           - AttributeName: Id
             AttributeType: S
-          - AttributeName: FamilyCreator
+          - AttributeName: FamilyOwner
             AttributeType: S
         KeySchema:
           - AttributeName: Id
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
         GlobalSecondaryIndexes:
-          - IndexName: FamilyCreator_IDX
+          - IndexName: FamilyOwner_IDX
             KeySchema:
-              - AttributeName: FamilyCreator
+              - AttributeName: FamilyOwner
                 KeyType: HASH
             Projection:
               ProjectionType: "ALL"

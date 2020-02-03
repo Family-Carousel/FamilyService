@@ -3,7 +3,7 @@ import { IMember } from '../interfaces/IMember';
 export interface IFamily {
     Id: string;
     Name: string;
-    FamilyCreator: string;
+    FamilyOwner: string;
     UserId?:string;
     Members?: IMember[]
     Description: string;

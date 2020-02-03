@@ -5,7 +5,7 @@ const parser = new TsjsonParser(S({
     type: 'object',
     properties: {
         Id: S({ type: 'string' }),
-        FamilyCreator: S({ type: 'string' }),
+        FamilyOwner: S({ type: 'string' }),
         Members: S({ type: 'array' }),
         Name: S({type: 'string'}),
         Description: S({type: 'string'}),
@@ -16,7 +16,7 @@ const parser = new TsjsonParser(S({
         LastUpdateBy: S({type: 'string'}),
         LastUpdateDateTime: S({type: 'string'})
     },
-    required: ['Id', 'FamilyCreator', 'Name', 'IsActive', 'CreateBy', 'LastUpdateBy', 'CreateDateTime', 'LastUpdateDateTime', 'Size']
+    required: ['Id', 'FamilyOwner', 'Name', 'IsActive', 'CreateBy', 'LastUpdateBy', 'CreateDateTime', 'LastUpdateDateTime', 'Size']
 }))
 
 export function caseTsJsonValidator(data: IFamily) {
