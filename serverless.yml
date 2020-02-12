@@ -8,9 +8,9 @@ provider:
   memorySize: 128
   logRetentionInDays: 3
   stage: ${opt:stage, 'dev'}
-  apiGateway: 
+  apiGateway:
     minimumCompressionSize: 1024
-  apiKeys: 
+  apiKeys:
     - FamilyCarousel-FamilyService-${self:provider.stage}
   usagePlan:
     quota:
@@ -25,31 +25,29 @@ provider:
     MEMBER_TABLE: ${self:custom.memberTableNameMap.${self:provider.stage}}
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
   iamRoleStatements:
-    - Effect: "Allow"
+    - Effect: 'Allow'
       Action:
-      - "logs: *"
-      Resource: "*"
-    - Effect: "Allow"
-      Action:   
-        - "dynamodb:*"
-      Resource: 
-        - { "Fn::GetAtt": ["MEMBERTABLE", "Arn"] }
-        - Fn::Join:
-          - "/"
-          - 
-            - { "Fn::GetAtt": ["MEMBERTABLE", "Arn"] }
-            - "index/*"
-        - { "Fn::GetAtt": ["FAMILYTABLE", "Arn"] }
-        - Fn::Join:
-          - "/"
-          - 
-            - { "Fn::GetAtt": ["FAMILYTABLE", "Arn"] }
-            - "index/*"
-    - Effect: "Allow"
+        - 'logs: *'
+      Resource: '*'
+    - Effect: 'Allow'
       Action:
-      - "s3: *"
+        - 'dynamodb:*'
       Resource:
-        - "arn:aws:s3:::${self:custom.FamilyPhotoBucketName}/*"
+        - { 'Fn::GetAtt': ['MEMBERTABLE', 'Arn'] }
+        - Fn::Join:
+            - '/'
+            - - { 'Fn::GetAtt': ['MEMBERTABLE', 'Arn'] }
+              - 'index/*'
+        - { 'Fn::GetAtt': ['FAMILYTABLE', 'Arn'] }
+        - Fn::Join:
+            - '/'
+            - - { 'Fn::GetAtt': ['FAMILYTABLE', 'Arn'] }
+              - 'index/*'
+    - Effect: 'Allow'
+      Action:
+        - 's3: *'
+      Resource:
+        - 'arn:aws:s3:::${self:custom.FamilyPhotoBucketName}/*'
 
 custom:
   shortName: FamilyCarousel
@@ -88,15 +86,16 @@ custom:
     createRoute53Record: true
     endpointType: 'regional'
   webpack:
-    webpackConfig: ./webpack.config.js 
+    webpackConfig: 'webpack.config.js'
     includeModules: true
+    packager: 'yarn'
 
 plugins:
   - serverless-offline
   - serverless-domain-manager
   - serverless-webpack
 
-package: 
+package:
   individually: true
 
 functions:
@@ -226,7 +225,7 @@ resources:
   Resources:
     FAMILYTABLE:
       Type: AWS::DynamoDB::Table
-      Properties: 
+      Properties:
         TableName: ${self:custom.familyTableNameMap.${self:provider.stage}}
         AttributeDefinitions:
           - AttributeName: Id
@@ -243,10 +242,10 @@ resources:
               - AttributeName: FamilyOwner
                 KeyType: HASH
             Projection:
-              ProjectionType: "ALL"
+              ProjectionType: 'ALL'
     MEMBERTABLE:
       Type: AWS::DynamoDB::Table
-      Properties: 
+      Properties:
         TableName: ${self:custom.memberTableNameMap.${self:provider.stage}}
         AttributeDefinitions:
           - AttributeName: Id
@@ -267,7 +266,7 @@ resources:
               - AttributeName: Id
                 KeyType: RANGE
             Projection:
-              ProjectionType: "ALL"
+              ProjectionType: 'ALL'
     FAMILYPHOTOBUCKET:
       Type: AWS::S3::Bucket
       Properties:
