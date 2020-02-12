@@ -78,6 +78,9 @@ export class FamilyService {
     }
 
     public async UpdateFamily(currentFamily: IFamily, newFamilyData: IFamily): Promise<IFamily> {
+        newFamilyData.CreateBy = currentFamily.CreateBy;
+        newFamilyData.CreateDateTime = newFamilyData.CreateDateTime;
+        
         const updateFamily = new Family(newFamilyData);
 
         if (updateFamily === currentFamily) {

@@ -140,6 +140,9 @@ export class MemberService {
     }
 
     public async UpdateMemberForFamily(currentMember: IMember, newMemberData: IMember): Promise<IMember> {
+        newMemberData.CreateDateTime = currentMember.CreateDateTime;
+        newMemberData.CreateBy = currentMember.CreateBy;
+
         const updateMember = new Member(newMemberData);
 
         if (currentMember === updateMember) {
@@ -171,6 +174,9 @@ export class MemberService {
         let updatedMemberList: IMember[] = [];
 
         for (let m = 0; m < currentMemberList.length; m++) {
+            newMemberData.CreateDateTime = currentMemberList[m].CreateDateTime;
+            newMemberData.CreateBy = currentMemberList[m].CreateBy;
+
             const updateMember = new Member(newMemberData);
 
             updateMember.Id = currentMemberList[m].Id;
