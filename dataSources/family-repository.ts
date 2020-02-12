@@ -1,6 +1,6 @@
 import { DynamoUtilities } from './dynamo.utilities';
 import { IFamily } from '../interfaces/IFamily';
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
 
 export interface IFamilyRepo {
     SaveFamily(familydata: IFamily): Promise<IFamily>;
@@ -13,10 +13,15 @@ const tableName: string = process.env.FAMILY_TABLE || 'devFamilyTable';
 
 @injectable()
 export class FamilyRepo implements IFamilyRepo {
+    protected _dynamoUtilities: DynamoUtilities;
+
+    constructor(@inject(DynamoUtilities) dynamoUtilities: DynamoUtilities) {
+        this._dynamoUtilities = dynamoUtilities;
+    }
 
     public async SaveFamily(familyData: IFamily): Promise<IFamily> {
         try {
-            const response = await DynamoUtilities.PutItem(tableName, familyData);
+            const response = await this._dynamoUtilities.PutItem(tableName, familyData);
             return response as IFamily;
         } catch (err) {
             console.error('Error updating family via Dynamo: ', err);
@@ -26,7 +31,7 @@ export class FamilyRepo implements IFamilyRepo {
 
     public async DeleteFamily(familyId: string): Promise<void> {
         try {
-            const response = await DynamoUtilities.DeleteItem(tableName, familyId);
+            const response = await this._dynamoUtilities.DeleteItem(tableName, familyId);
             return response;
         } catch (err) {
             console.error('Error updating family via Dynamo: ', err);
@@ -36,7 +41,7 @@ export class FamilyRepo implements IFamilyRepo {
 
     public async GetFamilyById(id: string): Promise<IFamily | void> {
         try {
-            const family = await DynamoUtilities.Query(tableName, 'Id', id);
+            const family = await this._dynamoUtilities.Query(tableName, 'Id', id);
             if (family && family.Items && family.Items.length > 0) {
                 return family.Items[0] as IFamily;
             }
@@ -49,7 +54,7 @@ export class FamilyRepo implements IFamilyRepo {
 
     public async ListAllFamilysForMember(memberId: string): Promise<IFamily[]> {
         try {
-            const familyList = await DynamoUtilities.Query(tableName, 'MemberId', memberId);
+            const familyList = await this._dynamoUtilities.Query(tableName, 'MemberId', memberId);
             return familyList as IFamily[];
         } catch (err) {
             console.error('Error listing families for member: ', err);
