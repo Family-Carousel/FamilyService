@@ -1,10 +1,17 @@
 import { IMember } from '../interfaces/IMember';
 import { Member } from '../models/Member';
-import { memberRepo } from '../dataSources/member-repository';
+import { MemberRepo } from '../dataSources/member-repository';
 import { caseTsJsonValidator } from '../schemas/memberSchema';
 import { IFamily } from '../interfaces/IFamily';
+import { inject, injectable } from 'inversify';
 
-class MemberService {
+@injectable()
+export class MemberService {
+    protected _memberRepo: MemberRepo;
+
+    constructor(@inject(MemberRepo) memberRepo: MemberRepo) {
+        this._memberRepo = memberRepo;
+    }
 
     public async createMember(memberData: IMember): Promise<IMember> {
         const newMember = new Member(memberData);
@@ -22,7 +29,7 @@ class MemberService {
         }
 
         try {
-            const response = await memberRepo.SaveMember(newMember);
+            const response = await this._memberRepo.SaveMember(newMember);
             return response as IMember;
         } catch (err) {
             console.error('Failed to save member to data table: ', err);
@@ -32,7 +39,7 @@ class MemberService {
 
     public async MapMembersToFamily(family: IFamily): Promise<IFamily> {
         try {
-            const members = await memberRepo.ListMembersByFamilyId(family.Id);
+            const members = await this._memberRepo.ListMembersByFamilyId(family.Id);
 
             if (members && members.length > 0) {
                 for (let m = 0; m <= members.length; m++) {
@@ -52,7 +59,7 @@ class MemberService {
     public async MapMembersToFamilyList(familyList: IFamily[]): Promise<IFamily[]> {
         try {
             for (let f = 0; f < familyList.length; f++) {
-                const members = await memberRepo.ListMembersByFamilyId(familyList[f].Id);
+                const members = await this._memberRepo.ListMembersByFamilyId(familyList[f].Id);
 
                 if (members && members.length > 0) {
                     for (let m = 0; m <= members.length; m++) {
@@ -72,8 +79,8 @@ class MemberService {
 
     public async GetMemberById(id: string): Promise<IMember> {
         try {
-            const member = await memberRepo.GetMemberById(id);
-            return member as Promise<IMember>;
+            const member = await this._memberRepo.GetMemberById(id);
+            return member as IMember;
         } catch (err) {
             console.error('Failed to get member by id: ', err);
             throw new Error('Failed to get member by id');
@@ -82,7 +89,7 @@ class MemberService {
 
     public async GetMemberByCompositKey(id: string, familyId: string): Promise<IMember> {
         try {
-            const member = await memberRepo.GetMemberByCompositKey(id, familyId);
+            const member = await this._memberRepo.GetMemberByCompositKey(id, familyId);
             return member as IMember;
         } catch (err) {
             console.error('Failed to get member by id: ', err);
@@ -92,8 +99,8 @@ class MemberService {
 
     public async ListAllMembersByFamilyId(id: string): Promise<IMember[]> {
         try {
-            const members = memberRepo.ListMembersByFamilyId(id);
-            return members as Promise<IMember[]>;
+            const members = await this._memberRepo.ListMembersByFamilyId(id);
+            return members as IMember[];
         } catch (err) {
             console.error('Failed to get members by familyId: ', err);
             throw new Error('Failed to get members by familyId');
@@ -102,8 +109,8 @@ class MemberService {
 
     public async ListAllMembers(id: string): Promise<IMember[]> {
         try {
-            const members = memberRepo.ListMemberById(id);
-            return members as Promise<IMember[]>;
+            const members = await this._memberRepo.ListMemberById(id);
+            return members as IMember[];
         } catch (err) {
             console.error('Failed to get members by memberId: ', err);
             throw new Error('Failed to get members by memberId');
@@ -113,7 +120,7 @@ class MemberService {
     public async DeleteMemberList(members: IMember[]): Promise<boolean> {
         try {
             for (let m = 0; m < members.length; m++) {
-                await memberRepo.DeleteMember(members[m].Id);
+                await this._memberRepo.DeleteMember(members[m].Id);
             }
             return true;
         } catch (err) {
@@ -124,7 +131,7 @@ class MemberService {
 
     public async DeleteMember(member: IMember): Promise<boolean> {
         try {
-            await memberRepo.DeleteMemberInSingleFamily(member.Id, member.FamilyId);
+            await this._memberRepo.DeleteMemberInSingleFamily(member.Id, member.FamilyId);
             return true;
         } catch (err) {
             console.error('Failed to delete member: ', err);
@@ -152,7 +159,7 @@ class MemberService {
         }
 
         try {
-            const response = await memberRepo.SaveMember(updateMember);
+            const response = await this._memberRepo.SaveMember(updateMember);
             return response as IMember;
         } catch (err) {
             console.error('Failed to save family to data table: ', err);
@@ -182,7 +189,7 @@ class MemberService {
             }
 
             try {
-                const response = await memberRepo.SaveMember(updateMember);
+                const response = await this._memberRepo.SaveMember(updateMember);
                 updatedMemberList.push(response as IMember);
             } catch (err) {
                 console.error('Failed to save family to data table: ', err);
@@ -193,5 +200,3 @@ class MemberService {
         return updatedMemberList;
     }
 }
-
-export const memberService = new MemberService();

@@ -1,7 +1,15 @@
+import 'reflect-metadata';
+import * as sourceMaps from 'source-map-support';
 import { APIGatewayEvent, ProxyResult } from 'aws-lambda';
+sourceMaps.install();
+
+import DIContainer from '../di-container';
 import { utilities } from './utilities';
-import { familyService } from '../services/FamilyService';
-import { memberService } from '../services/MemberService';
+import { FamilyService } from '../services/FamilyService';
+import { MemberService } from '../services/MemberService';
+
+const familyService: FamilyService = DIContainer.resolve<FamilyService>(FamilyService);
+const memberService: MemberService = DIContainer.resolve<MemberService>(MemberService);
 
 export const deleteFamily = async (
     event: APIGatewayEvent,

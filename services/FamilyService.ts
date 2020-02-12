@@ -1,10 +1,17 @@
 import { IFamily } from '../interfaces/IFamily';
 import { IMember } from '../interfaces/IMember';
 import { Family } from '../models/Family';
-import { familyRepo } from '../dataSources/family-repository';
+import { FamilyRepo } from '../dataSources/family-repository';
 import { caseTsJsonValidator } from '../schemas/familySchema';
+import { inject, injectable } from 'inversify';
 
-class FamilyService {
+@injectable()
+export class FamilyService {
+    protected _familyRepo: FamilyRepo;
+
+    constructor(@inject(FamilyRepo) familyRepo: FamilyRepo) {
+        this._familyRepo = familyRepo;
+    }
     
     public async createFamily(familyData: IFamily): Promise<IFamily> {
         familyData.IsActive = true;
@@ -24,7 +31,7 @@ class FamilyService {
         }
 
         try {
-            const response = await familyRepo.SaveFamily(newFamily);
+            const response = await this._familyRepo.SaveFamily(newFamily);
             return response as IFamily;
         } catch (err) {
             console.error('Failed to save family to data table: ', err);
@@ -34,7 +41,7 @@ class FamilyService {
 
     public async GetFamilyById(id: string): Promise<IFamily> {
         try {
-            const family = await familyRepo.GetFamilyById(id);
+            const family = await this._familyRepo.GetFamilyById(id);
             return family as IFamily;
         } catch(err) {
             console.error('Failed to get family by id: ', err);
@@ -62,7 +69,7 @@ class FamilyService {
         }
 
         try {
-            await familyRepo.DeleteFamily(id);
+            await this._familyRepo.DeleteFamily(id);
             return true;
         } catch (err) {
             console.error('Error Deleting family: ', err);
@@ -90,7 +97,7 @@ class FamilyService {
         }
 
         try {
-            const response = await familyRepo.SaveFamily(updateFamily);
+            const response = await this._familyRepo.SaveFamily(updateFamily);
             return response as IFamily;
         } catch (err) {
             console.error('Failed to save family to data table: ', err);
@@ -98,5 +105,3 @@ class FamilyService {
         }
     }
 }
-
-export const familyService = new FamilyService();

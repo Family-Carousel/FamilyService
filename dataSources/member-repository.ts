@@ -1,22 +1,35 @@
-import { DynamoUtils } from './dynamo.utilities';
+import { DynamoUtilities } from './dynamo.utilities';
 import { IMember } from '../interfaces/IMember';
+import { injectable } from 'inversify';
+
+interface IMemberRepo {
+    SaveMember(memberData: IMember): Promise<IMember>;
+    DeleteMember(memberId: string): Promise<void>;
+    DeleteMemberInSingleFamily(memberId: string, familyId: string | null): Promise<void>;
+    GetMemberById(id: string): Promise<IMember | void>;
+    GetMemberByCompositKey(id: string, familyId: string): Promise<IMember | void>;
+    ListMemberById(id: string): Promise<IMember[] | void>;
+    ListMembersByFamilyId(familyId: string): Promise<IMember[] | void>;
+}
+
 const tableName: string = process.env.MEMBER_TABLE || 'devMemberTable';
 
-class MemberRepo {
+@injectable()
+export class MemberRepo implements IMemberRepo {
 
-    public async SaveMember(memberData: IMember) {
+    public async SaveMember(memberData: IMember): Promise<IMember> {
         try {
-            const response = await DynamoUtils.PutItem(tableName, memberData);
-            return response;
+            const response = await DynamoUtilities.PutItem(tableName, memberData);
+            return response as IMember;
         } catch (err) {
             console.error('Error updating Member via Dynamo: ', err);
             throw new Error('Error updating Member via Dynamo');
         }
     }
 
-    public async DeleteMember(memberId: string) {
+    public async DeleteMember(memberId: string): Promise<void> {
         try {
-            const response = await DynamoUtils.DeleteItem(tableName, memberId);
+            const response = await DynamoUtilities.DeleteItem(tableName, memberId);
             return response;
         } catch (err) {
             console.error('Error deleting Member via Dynamo: ', err);
@@ -24,9 +37,9 @@ class MemberRepo {
         }
     }
 
-    public async DeleteMemberInSingleFamily(memberId: string, familyId: string | null = null) {
+    public async DeleteMemberInSingleFamily(memberId: string, familyId: string | null = null): Promise<void> {
         try {
-            const response = await DynamoUtils.DeleteItem(tableName, memberId, 'FamilyId' , familyId);
+            const response = await DynamoUtilities.DeleteItem(tableName, memberId, 'FamilyId' , familyId);
             return response;
         } catch (err) {
             console.error('Error deleting Member via Dynamo: ', err);
@@ -34,11 +47,11 @@ class MemberRepo {
         }
     }
 
-    public async GetMemberById(id: string) {
+    public async GetMemberById(id: string): Promise<IMember | void> {
         try {
-            const member = await DynamoUtils.Query(tableName, 'Id', id);
+            const member = await DynamoUtilities.Query(tableName, 'Id', id);
             if(member && member.Items && member.Items.length > 0) {
-                return member.Items[0];
+                return member.Items[0] as IMember;
             }
             return;
         } catch (err) {
@@ -47,11 +60,11 @@ class MemberRepo {
         }
     }
 
-    public async GetMemberByCompositKey(id: string, familyId: string) {
+    public async GetMemberByCompositKey(id: string, familyId: string): Promise<IMember | void> {
         try {
-            const member = await DynamoUtils.Query(tableName, 'Id', id, null, 'FamilyId', familyId);
+            const member = await DynamoUtilities.Query(tableName, 'Id', id, null, 'FamilyId', familyId);
             if(member && member.Items && member.Items.length > 0) {
-                return member.Items[0];
+                return member.Items[0] as IMember;
             }
             return;
         } catch (err) {
@@ -60,11 +73,11 @@ class MemberRepo {
         }
     }
 
-    public async ListMemberById(id: string) {
+    public async ListMemberById(id: string): Promise<IMember[] | void> {
         try {
-            const member = await DynamoUtils.Query(tableName, 'Id', id);
+            const member = await DynamoUtilities.Query(tableName, 'Id', id);
             if(member && member.Items && member.Items.length > 0) {
-                return member.Items;
+                return member.Items as IMember[];
             }
             return;
         } catch (err) {
@@ -73,11 +86,11 @@ class MemberRepo {
         }
     }
 
-    public async ListMembersByFamilyId(familyId: string) {
+    public async ListMembersByFamilyId(familyId: string): Promise<IMember[] | void> {
         try {
-            const members = await DynamoUtils.Query(tableName, 'FamilyId', familyId, 'FamilyId_IDX');
+            const members = await DynamoUtilities.Query(tableName, 'FamilyId', familyId, 'FamilyId_IDX');
             if(members && members.Items && members.Items.length > 0) {
-                return members.Items;
+                return members.Items as IMember[];
             }
             return;
         } catch (err) {
@@ -86,5 +99,3 @@ class MemberRepo {
         }
     }
 }
-
-export const memberRepo = new MemberRepo();

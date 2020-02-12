@@ -2,6 +2,7 @@ import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { AWSError } from 'aws-sdk';
 import { IFamily } from '../interfaces/IFamily';
 import { IMember } from '../interfaces/IMember';
+import { injectable } from 'inversify';
 
 interface IExpressionAttributeValues {
   ':hashKeyValue': string;
@@ -15,7 +16,15 @@ interface IParamsObject {
   IndexName?: string;
 }
 
-class DynamoUtilities {
+interface IDynamoUtilities {
+  Query(tableName: string, hashName: string, hashValue: string, indexName: string | null,
+    rangeName: string | null, rangeValue: string | null): Promise<DocumentClient.QueryOutput>;
+  PutItem(tableName: string, item: IFamily | IMember): Promise<IFamily | IMember>;
+  DeleteItem(tableName: string, id: string, rangeName: string | null, rangeId: string | null): Promise<void>;
+}
+
+@injectable()
+export class DynamoUtilities implements IDynamoUtilities {
 
   private ParamsObjectFactory(tableName: string, hashName: string, hashValue: string, indexName: string | null = null,
     rangeName: string | null = null, rangeValue: string | null = null): DocumentClient.QueryInput {
@@ -43,7 +52,7 @@ class DynamoUtilities {
   public Query(tableName: string, hashName: string, hashValue: string, indexName: string | null = null,
     rangeName: string | null = null, rangeValue: string | null = null): Promise<DocumentClient.QueryOutput> {
     const queryObj: DocumentClient.QueryInput = this.ParamsObjectFactory(tableName, hashName, hashValue, indexName, rangeName, rangeValue);
-    
+
     const docClient = new DocumentClient();
 
     return new Promise(function (resolve, reject) {
@@ -84,7 +93,7 @@ class DynamoUtilities {
       if (rangeName && rangeId) {
         params = {
           TableName: tableName,
-          Key: { Id: id, rangeName: rangeId }          
+          Key: { Id: id, rangeName: rangeId }
         }
       }
 
@@ -127,5 +136,3 @@ class DynamoUtilities {
   //   });
   // }
 }
-
-export const DynamoUtils = new DynamoUtilities();
