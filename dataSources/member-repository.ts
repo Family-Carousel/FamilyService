@@ -4,7 +4,6 @@ import { injectable, inject } from 'inversify';
 
 interface IMemberRepo {
     SaveMember(memberData: IMember): Promise<IMember>;
-    DeleteMember(memberId: string): Promise<void>;
     DeleteMemberInSingleFamily(memberId: string, familyId: string | null): Promise<void>;
     GetMemberById(id: string): Promise<IMember | void>;
     GetMemberByCompositKey(id: string, familyId: string): Promise<IMember | void>;
@@ -29,16 +28,6 @@ export class MemberRepo implements IMemberRepo {
         } catch (err) {
             console.error('Error updating Member via Dynamo: ', err);
             throw new Error('Error updating Member via Dynamo');
-        }
-    }
-
-    public async DeleteMember(memberId: string): Promise<void> {
-        try {
-            const response = await this._dynamoUtilities.DeleteItem(tableName, memberId);
-            return response;
-        } catch (err) {
-            console.error('Error deleting Member via Dynamo: ', err);
-            throw new Error('Error deleting Member via Dynamo');
         }
     }
 

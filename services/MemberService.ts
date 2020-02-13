@@ -120,7 +120,7 @@ export class MemberService {
     public async DeleteMemberList(members: IMember[]): Promise<boolean> {
         try {
             for (let m = 0; m < members.length; m++) {
-                await this._memberRepo.DeleteMember(members[m].Id);
+                await this._memberRepo.DeleteMemberInSingleFamily(members[m].Id, members[m].FamilyId);
             }
             return true;
         } catch (err) {

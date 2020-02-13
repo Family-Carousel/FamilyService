@@ -91,19 +91,24 @@ export class DynamoUtilities implements IDynamoUtilities {
       };
 
       if (rangeName && rangeId) {
-        params = {
-          TableName: tableName,
-          Key: { Id: id, rangeName: rangeId }
+        if (rangeName === 'FamilyOwner') {
+          params.Key = { Id: id, FamilyOwner: rangeId }
+        }
+
+        if (rangeName === 'FamilyId') {
+          params.Key = { Id: id, FamilyId: rangeId }
         }
       }
+
+      console.log('params', params);
 
       const docClient = new DocumentClient();
 
       docClient
         .delete(params)
         .promise()
-        .then(() => resolve())
-        .catch((err: AWSError) => reject('Error deleting document to dynamo: ' + err));
+        .then((res) => resolve(console.log(res)))
+        .catch((err: AWSError) => reject('Error deleting document from dynamo: ' + err));
     });
   }
 

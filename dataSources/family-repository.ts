@@ -24,8 +24,8 @@ export class FamilyRepo implements IFamilyRepo {
             const response = await this._dynamoUtilities.PutItem(tableName, familyData);
             return response as IFamily;
         } catch (err) {
-            console.error('Error updating family via Dynamo: ', err);
-            throw new Error('Error updating family via Dynamo');
+            console.error('Error Saving family via Dynamo: ', err);
+            throw new Error('Error Saving family via Dynamo');
         }
     }
 
@@ -34,8 +34,8 @@ export class FamilyRepo implements IFamilyRepo {
             const response = await this._dynamoUtilities.DeleteItem(tableName, familyId);
             return response;
         } catch (err) {
-            console.error('Error updating family via Dynamo: ', err);
-            throw new Error('Error updating family via Dynamo');
+            console.error('Error deleting family via Dynamo: ', err);
+            throw new Error('Error deleting family via Dynamo');
         }
     }
 
