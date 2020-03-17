@@ -1,122 +1,129 @@
 import 'reflect-metadata';
 import * as sourceMaps from 'source-map-support';
 import { APIGatewayEvent, ProxyResult } from 'aws-lambda';
+import { inject } from 'inversify';
 sourceMaps.install();
 
+
 import DIContainer from '../di-container';
-import { utilities } from './utilities';
+import { Utilities } from './utilities';
 import { FamilyService } from '../services/FamilyService';
 import { MemberService } from '../services/MemberService';
 
-const familyService: FamilyService = DIContainer.resolve<FamilyService>(FamilyService);
-const memberService: MemberService = DIContainer.resolve<MemberService>(MemberService);
+export class ReadHandler {
+    private _familyService: FamilyService;
+    private _memberService: MemberService;
 
-export const getFamilyById = async (
-    event: APIGatewayEvent,
-): Promise<ProxyResult> => {
-    try {
-        if (!event || !event.pathParameters || !event.pathParameters.id) {
-            return utilities.BuildResponse(400, JSON.stringify('Id for family was not provided'));
+    constructor(@inject(FamilyService) familyService?: FamilyService, @inject(MemberService) memberService?: MemberService) {
+        this._familyService = familyService || DIContainer.resolve<FamilyService>(FamilyService);
+        this._memberService = memberService || DIContainer.resolve<MemberService>(MemberService);
+    }
+
+    public async GetFamilyById(event: APIGatewayEvent): Promise<ProxyResult> {
+        try {
+            if (!event || !event.pathParameters || !event.pathParameters.id) {
+                return Utilities.BuildResponse(400, JSON.stringify('Id for family was not provided'));
+            }
+    
+            const id = event.pathParameters.id;
+    
+            const familyReturn = await this._familyService.GetFamilyById(id);
+    
+            if (!familyReturn) {
+                return Utilities.BuildResponse(404, JSON.stringify('Family does not exist'));
+            }
+    
+            const familyWithMembers = await this._memberService.MapMembersToFamily(familyReturn);
+    
+            if (!familyWithMembers) {
+                return Utilities.BuildResponse(404, JSON.stringify('Family does not exist'));
+            }
+    
+            return Utilities.BuildResponse(200, JSON.stringify(familyWithMembers));
+        } catch (err) {
+            console.error('Family Service Get a family error: ', err);
+            return Utilities.BuildResponse(500, JSON.stringify('Family Service internal server error'));
         }
+    }
 
-        const id = event.pathParameters.id;
-
-        const familyReturn = await familyService.GetFamilyById(id);
-
-        if (!familyReturn) {
-            return utilities.BuildResponse(404, JSON.stringify('Family does not exist'));
+    public async ListAllMembersForFamily(event: APIGatewayEvent): Promise<ProxyResult> {
+        try {
+            if (!event || !event.pathParameters || !event.pathParameters.id) {
+                return Utilities.BuildResponse(400, JSON.stringify('Id for family was not provided'));
+            }
+    
+            const id = event.pathParameters.id;
+            
+            const memberReturn = await this._memberService.ListAllMembersByFamilyId(id);
+    
+            if (!memberReturn) {
+                return Utilities.BuildResponse(404, JSON.stringify('Family has no members'));
+            }
+    
+            return Utilities.BuildResponse(200, JSON.stringify(memberReturn));
+        } catch (err) {
+            console.error('Family Service list all members in family error: ', err);
+            return Utilities.BuildResponse(500, JSON.stringify('Family Service internal server error'));
         }
+    }
 
-        const familyWithMembers = await memberService.MapMembersToFamily(familyReturn);
-
-        if (!familyWithMembers) {
-            return utilities.BuildResponse(404, JSON.stringify('Family does not exist'));
+    public async GetMemberById(event: APIGatewayEvent): Promise<ProxyResult> {
+        try {
+            if (!event || !event.pathParameters || !event.pathParameters.id) {
+                return Utilities.BuildResponse(400, JSON.stringify('Id for member was not provided'));
+            }
+    
+            const id = event.pathParameters.id;
+    
+            const memberReturn = await this._memberService.GetMemberById(id);
+    
+            if (!memberReturn) {
+                return Utilities.BuildResponse(404, JSON.stringify('Member does not exist'));
+            }
+    
+            return Utilities.BuildResponse(200, JSON.stringify(memberReturn));
+        } catch (err) {
+            console.error('Family Service Get a member error: ', err);
+            return Utilities.BuildResponse(500, JSON.stringify('Family Service internal server error'));
         }
-
-        return utilities.BuildResponse(200, JSON.stringify(familyWithMembers));
-    } catch (err) {
-        console.error('Family Service Get a family error: ', err);
-        return utilities.BuildResponse(500, JSON.stringify('Family Service internal server error'));
+    }
+    
+    public async ListAllFamilysForMember(event: APIGatewayEvent): Promise<ProxyResult> {
+        try {
+            if (!event || !event.pathParameters || !event.pathParameters.id) {
+                return Utilities.BuildResponse(400, JSON.stringify('Id for member was not provided'));
+            }
+    
+            const id = event.pathParameters.id;
+    
+            const response = await this._memberService.ListAllMembers(id);
+    
+            if (!response) {
+                return Utilities.BuildResponse(404, JSON.stringify('No Members Found'));
+            }
+    
+            const families = await this._familyService.ListFamilysForEachMember(response);
+    
+            if (!families) {
+                return Utilities.BuildResponse(404, JSON.stringify('No Families Found Matching any members'));
+            }
+    
+            const familyWithMembers = await this._memberService.MapMembersToFamilyList(families);
+    
+            if (!familyWithMembers) {
+                return Utilities.BuildResponse(404, JSON.stringify('Family does not exist'));
+            }
+    
+            return Utilities.BuildResponse(200, JSON.stringify(familyWithMembers));
+        } catch (err) {
+            console.error('Family Service Get a member error: ', err);
+            return Utilities.BuildResponse(500, JSON.stringify('Family Service internal server error'));
+        }
     }
 }
 
-export const listAllMembersForFamily = async (
-    event: APIGatewayEvent,
-): Promise<ProxyResult> => {
-    try {
-        if (!event || !event.pathParameters || !event.pathParameters.id) {
-            return utilities.BuildResponse(400, JSON.stringify('Id for family was not provided'));
-        }
-
-        const id = event.pathParameters.id;
-        
-        const memberReturn = await memberService.ListAllMembersByFamilyId(id);
-
-        if (!memberReturn) {
-            return utilities.BuildResponse(404, JSON.stringify('Family has no members'));
-        }
-
-        return utilities.BuildResponse(200, JSON.stringify(memberReturn));
-    } catch (err) {
-        console.error('Family Service list all members in family error: ', err);
-        return utilities.BuildResponse(500, JSON.stringify('Family Service internal server error'));
-    }
-}
-
-export const getMemberById = async (
-    event: APIGatewayEvent,
-): Promise<ProxyResult> => {
-    try {
-        if (!event || !event.pathParameters || !event.pathParameters.id) {
-            return utilities.BuildResponse(400, JSON.stringify('Id for member was not provided'));
-        }
-
-        const id = event.pathParameters.id;
-
-        const memberReturn = await memberService.GetMemberById(id);
-
-        if (!memberReturn) {
-            return utilities.BuildResponse(404, JSON.stringify('Member does not exist'));
-        }
-
-        return utilities.BuildResponse(200, JSON.stringify(memberReturn));
-    } catch (err) {
-        console.error('Family Service Get a member error: ', err);
-        return utilities.BuildResponse(500, JSON.stringify('Family Service internal server error'));
-    }
-}
-
-export const listAllFamilysForMember = async (
-    event: APIGatewayEvent
-): Promise<ProxyResult> => {
-    try {
-        if (!event || !event.pathParameters || !event.pathParameters.id) {
-            return utilities.BuildResponse(400, JSON.stringify('Id for member was not provided'));
-        }
-
-        const id = event.pathParameters.id;
-
-        const response = await memberService.ListAllMembers(id);
-
-        if (!response) {
-            return utilities.BuildResponse(404, JSON.stringify('No Members Found'));
-        }
-
-        const families = await familyService.ListFamilysForEachMember(response);
-
-        if (!families) {
-            return utilities.BuildResponse(404, JSON.stringify('No Families Found Matching any members'));
-        }
-
-        const familyWithMembers = await memberService.MapMembersToFamilyList(families);
-
-        if (!familyWithMembers) {
-            return utilities.BuildResponse(404, JSON.stringify('Family does not exist'));
-        }
-
-        return utilities.BuildResponse(200, JSON.stringify(familyWithMembers));
-    } catch (err) {
-        console.error('Family Service Get a member error: ', err);
-        return utilities.BuildResponse(500, JSON.stringify('Family Service internal server error'));
-    }
-}
+export const invokeReadHandler = new ReadHandler();
+export const getFamilyById = invokeReadHandler.GetFamilyById.bind(invokeReadHandler);
+export const listAllMembersForFamily = invokeReadHandler.ListAllMembersForFamily.bind(invokeReadHandler);
+export const getMemberById = invokeReadHandler.GetMemberById.bind(invokeReadHandler);
+export const listAllFamilysForMember = invokeReadHandler.ListAllFamilysForMember.bind(invokeReadHandler);

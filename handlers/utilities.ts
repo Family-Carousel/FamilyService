@@ -1,8 +1,8 @@
 import { ProxyResult } from 'aws-lambda';
 
-class Utilities {
+export class Utilities {
 
-    public BuildResponse(statusCode: number, body: string): ProxyResult {
+    public static BuildResponse(statusCode: number, body: string): ProxyResult {
         return {
             isBase64Encoded: false,
             statusCode: statusCode,
@@ -11,5 +11,3 @@ class Utilities {
         }
     }
 }
-
-export const utilities = new Utilities();

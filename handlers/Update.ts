@@ -1,137 +1,144 @@
 import 'reflect-metadata';
 import * as sourceMaps from 'source-map-support';
 import { APIGatewayEvent, ProxyResult } from 'aws-lambda';
+import { inject } from 'inversify';
 sourceMaps.install();
 
+
 import DIContainer from '../di-container';
-import { utilities } from './utilities';
+import { Utilities } from './utilities';
 import { FamilyService } from '../services/FamilyService';
 import { MemberService } from '../services/MemberService';
 
-const familyService: FamilyService = DIContainer.resolve<FamilyService>(FamilyService);
-const memberService: MemberService = DIContainer.resolve<MemberService>(MemberService);
+export class UpdateHandler {
+    private _familyService: FamilyService;
+    private _memberService: MemberService;
 
-export const updateFamily = async (
-    event: APIGatewayEvent,
-): Promise<ProxyResult> => {
-    try {
-        if (!event || !event.pathParameters || !event.pathParameters.id) {
-            return utilities.BuildResponse(400, JSON.stringify('id is required in path to perform update'));
+    constructor(@inject(FamilyService) familyService?: FamilyService, @inject(MemberService) memberService?: MemberService) {
+        this._familyService = familyService || DIContainer.resolve<FamilyService>(FamilyService);
+        this._memberService = memberService || DIContainer.resolve<MemberService>(MemberService);
+    }
+
+    public async UpdateFamily(event: APIGatewayEvent): Promise<ProxyResult> {
+        try {
+            if (!event || !event.pathParameters || !event.pathParameters.id) {
+                return Utilities.BuildResponse(400, JSON.stringify('id is required in path to perform update'));
+            }
+    
+            if (!event.body) {
+                return Utilities.BuildResponse(400, JSON.stringify('Update body must be included'));
+            }
+    
+            const id = event.pathParameters.id;
+            let newFamilyData = JSON.parse(event.body);
+    
+    
+            if (id !== newFamilyData.Id ) {
+                return Utilities.BuildResponse(400, JSON.stringify('Id mismatch. Id in Body must match id in Path'));
+            }
+    
+            let currentFamily = await this._familyService.GetFamilyById(id);
+    
+            if (!currentFamily) {
+                return Utilities.BuildResponse(404, JSON.stringify('Family does not exist. Is your Id wrong?'));
+            }
+    
+            const updatedFamily = await this._familyService.UpdateFamily(currentFamily, newFamilyData);
+    
+            if (!updatedFamily) {
+                return Utilities.BuildResponse(404, JSON.stringify('Family update not successful'));
+            }
+    
+            return Utilities.BuildResponse(200, JSON.stringify(updatedFamily));
+        } catch (err) {
+            console.error('Family Service family update failure: ' + err);
+            return Utilities.BuildResponse(500, 'Family Service family update failure');
         }
+    }
 
-        if (!event.body) {
-            return utilities.BuildResponse(400, JSON.stringify('Update body must be included'));
-        }
+    public async UpdateMemberForFamily(event: APIGatewayEvent): Promise<ProxyResult> {
+        try {
+            if (!event || !event.pathParameters || !event.pathParameters.id) {
+                return Utilities.BuildResponse(400, JSON.stringify('id is required in path to perform update'));
+            }
+    
+            if (!event.pathParameters.familyId) {
+                return Utilities.BuildResponse(400, JSON.stringify('familyId is required in path to perform update'));
+            }
+    
+            if (!event.body) {
+                return Utilities.BuildResponse(400, JSON.stringify('Update body must be included'));
+            }
+    
+            const id = event.pathParameters.id;
+            const familyId = event.pathParameters.familyId
+            let newMemberData = JSON.parse(event.body);
+    
+            if (familyId !== newMemberData.FamilyId ) {
+                return Utilities.BuildResponse(400, JSON.stringify('Id mismatch. Id in Body must match familyId in Path'));
+            }
+    
+            if (id !== newMemberData.Id ) {
+                return Utilities.BuildResponse(400, JSON.stringify('Id mismatch. Id in Body must match id in Path'));
+            }
+    
+            let currentMember = await this._memberService.GetMemberByCompositKey(id, familyId);
+    
+            if (!currentMember) {
+                return Utilities.BuildResponse(404, JSON.stringify('Member does not exist. Is your Id wrong?'));
+            }
+    
+            const updatedMember = await this._memberService.UpdateMemberForFamily(currentMember, newMemberData);
+    
+            if (!updatedMember) {
+                return Utilities.BuildResponse(404, JSON.stringify('Member update not successful'));
+            }
+    
+            return Utilities.BuildResponse(200, JSON.stringify(updatedMember));
+        } catch (err) {
+            console.error('Family Service member update failure: ' + err);
+            return Utilities.BuildResponse(500, 'Family Service member update failure');
+        } 
+    }
 
-        const id = event.pathParameters.id;
-        let newFamilyData = JSON.parse(event.body);
-
-
-        if (id !== newFamilyData.Id ) {
-            return utilities.BuildResponse(400, JSON.stringify('Id mismatch. Id in Body must match id in Path'));
-        }
-
-        let currentFamily = await familyService.GetFamilyById(id);
-
-        if (!currentFamily) {
-            return utilities.BuildResponse(404, JSON.stringify('Family does not exist. Is your Id wrong?'));
-        }
-
-        const updatedFamily = await familyService.UpdateFamily(currentFamily, newFamilyData);
-
-        if (!updatedFamily) {
-            return utilities.BuildResponse(404, JSON.stringify('Family update not successful'));
-        }
-
-        return utilities.BuildResponse(200, JSON.stringify(updatedFamily));
-    } catch (err) {
-        console.error('Family Service family update failure: ' + err);
-        return utilities.BuildResponse(500, 'Family Service family update failure');
+    public async UpdateMemberGlobally(event: APIGatewayEvent): Promise<ProxyResult> {
+        try {
+            if (!event || !event.pathParameters || !event.pathParameters.id) {
+                return Utilities.BuildResponse(400, JSON.stringify('id is required in path to perform update'));
+            }
+    
+            if (!event.body) {
+                return Utilities.BuildResponse(400, JSON.stringify('Update body must be included'));
+            }
+    
+            const id = event.pathParameters.id;
+            let newMemberData = JSON.parse(event.body);
+    
+            if (id !== newMemberData.Id ) {
+                return Utilities.BuildResponse(400, JSON.stringify('Id mismatch. Id in Body must match id in Path'));
+            }
+    
+            let currentMemberList = await this._memberService.ListAllMembers(id);
+    
+            if (!currentMemberList) {
+                return Utilities.BuildResponse(404, JSON.stringify('Member does not exist. Is your Id wrong?'));
+            }
+    
+            const updatedMember = await this._memberService.UpdateMemberGlobally(currentMemberList, newMemberData);
+    
+            if (!updatedMember) {
+                return Utilities.BuildResponse(404, JSON.stringify('Member update not successful'));
+            }
+    
+            return Utilities.BuildResponse(200, JSON.stringify(updatedMember));
+        } catch (err) {
+            console.error('Family Service member update failure: ' + err);
+            return Utilities.BuildResponse(500, 'Family Service member update failure');
+        }    
     }
 }
 
-export const updateMemberForFamily = async (
-    event: APIGatewayEvent,
-): Promise<ProxyResult> => {
-    try {
-        if (!event || !event.pathParameters || !event.pathParameters.id) {
-            return utilities.BuildResponse(400, JSON.stringify('id is required in path to perform update'));
-        }
-
-        if (!event.pathParameters.familyId) {
-            return utilities.BuildResponse(400, JSON.stringify('familyId is required in path to perform update'));
-        }
-
-        if (!event.body) {
-            return utilities.BuildResponse(400, JSON.stringify('Update body must be included'));
-        }
-
-        const id = event.pathParameters.id;
-        const familyId = event.pathParameters.familyId
-        let newMemberData = JSON.parse(event.body);
-
-        if (familyId !== newMemberData.FamilyId ) {
-            return utilities.BuildResponse(400, JSON.stringify('Id mismatch. Id in Body must match familyId in Path'));
-        }
-
-        if (id !== newMemberData.Id ) {
-            return utilities.BuildResponse(400, JSON.stringify('Id mismatch. Id in Body must match id in Path'));
-        }
-
-        let currentMember = await memberService.GetMemberByCompositKey(id, familyId);
-
-        if (!currentMember) {
-            return utilities.BuildResponse(404, JSON.stringify('Member does not exist. Is your Id wrong?'));
-        }
-
-        const updatedMember = await memberService.UpdateMemberForFamily(currentMember, newMemberData);
-
-        if (!updatedMember) {
-            return utilities.BuildResponse(404, JSON.stringify('Member update not successful'));
-        }
-
-        return utilities.BuildResponse(200, JSON.stringify(updatedMember));
-    } catch (err) {
-        console.error('Family Service member update failure: ' + err);
-        return utilities.BuildResponse(500, 'Family Service member update failure');
-    }    
-}
-
-export const updateMemberGlobally = async (
-    event: APIGatewayEvent,
-): Promise<ProxyResult> => {
-    try {
-        if (!event || !event.pathParameters || !event.pathParameters.id) {
-            return utilities.BuildResponse(400, JSON.stringify('id is required in path to perform update'));
-        }
-
-        if (!event.body) {
-            return utilities.BuildResponse(400, JSON.stringify('Update body must be included'));
-        }
-
-        const id = event.pathParameters.id;
-        let newMemberData = JSON.parse(event.body);
-
-        if (id !== newMemberData.Id ) {
-            return utilities.BuildResponse(400, JSON.stringify('Id mismatch. Id in Body must match id in Path'));
-        }
-
-        let currentMemberList = await memberService.ListAllMembers(id);
-
-        if (!currentMemberList) {
-            return utilities.BuildResponse(404, JSON.stringify('Member does not exist. Is your Id wrong?'));
-        }
-
-        const updatedMember = await memberService.UpdateMemberGlobally(currentMemberList, newMemberData);
-
-        if (!updatedMember) {
-            return utilities.BuildResponse(404, JSON.stringify('Member update not successful'));
-        }
-
-        return utilities.BuildResponse(200, JSON.stringify(updatedMember));
-    } catch (err) {
-        console.error('Family Service member update failure: ' + err);
-        return utilities.BuildResponse(500, 'Family Service member update failure');
-    }    
-}
-
+export const invokeUpdateHandler = new UpdateHandler();
+export const updateFamily = invokeUpdateHandler.UpdateFamily.bind(invokeUpdateHandler);
+export const updateMemberForFamily = invokeUpdateHandler.UpdateMemberForFamily.bind(invokeUpdateHandler);
+export const updateMemberGlobally = invokeUpdateHandler.UpdateMemberGlobally.bind(invokeUpdateHandler);
