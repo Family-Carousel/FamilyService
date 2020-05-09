@@ -7,18 +7,16 @@ provider:
   region: us-east-2
   memorySize: 128
   logRetentionInDays: 3
+  logs:
+    httpApi: true
   stage: ${opt:stage, 'dev'}
-  apiGateway:
-    minimumCompressionSize: 1024
-  apiKeys:
-    - FamilyCarousel-FamilyService-${self:provider.stage}
-  usagePlan:
-    quota:
-      limit: 10000
-      period: DAY
-    throttle:
-      burstLimit: 1000
-      rateLimit: 1000
+  httpApi:
+    cors: true
+    authorizers:
+      serviceAuthorizer:
+        identitySource: $request.header.Authorization
+        issuerUrl: https://familycarousel.auth0.com/
+        audience: familyservice-dev.familycarousel.com
   environment:
     NODE_ENV: ${self:provider.stage}
     FAMILY_TABLE: ${self:custom.familyTableNameMap.${self:provider.stage}}
@@ -85,6 +83,7 @@ custom:
     certificateName: ${self:custom.FamilyServiceCertMap.${self:provider.stage}}
     createRoute53Record: true
     endpointType: 'regional'
+    apiType: http
   webpack:
     webpackConfig: 'webpack.config.js'
     includeModules: true
@@ -104,123 +103,111 @@ functions:
     name: ${self:custom.createFamilyName}
     handler: handlers/Create.createFamily
     description: Lambda for Creating a family in the family service
-    timeout: 30
     events:
-      - http:
+      - httpApi:
           path: /family
-          method: post
-          private: true
+          method: POST
+          authorizer: serviceAuthorizer
   createMember:
     name: ${self:custom.createMemberName}
     handler: handlers/Create.createMember
     description: Lambda for Creating a Member in the family service
-    timeout: 30
     events:
-      - http:
+      - httpApi:
           path: /member
-          method: post
-          private: true
+          method: POST
+          authorizer: serviceAuthorizer  
   getFamilyById:
     name: ${self:custom.getFamilyByIdName}
     handler: handlers/Read.getFamilyById
     description: Lambda for getting a family by its id
-    timeout: 30
     events:
-      - http:
+      - httpApi:
           path: /family/{id}
-          method: get
-          private: true
+          method: GET
+          authorizer: serviceAuthorizer
   getMemberById:
     name: ${self:custom.getMemberByIdName}
     handler: handlers/Read.getMemberById
     description: Lambda for getting a member by its id
-    timeout: 30
     events:
-      - http:
+      - httpApi:
           path: /member/{id}
-          method: get
-          private: true
+          method: GET
+          authorizer: serviceAuthorizer
   listAllMembersForFamily:
     name: ${self:custom.listAllMembersForFamilyName}
     handler: handlers/Read.listAllMembersForFamily
     description: Lambda for getting a member by its id
-    timeout: 30
     events:
-      - http:
+      - httpApi:
           path: /family/{id}/member
-          method: get
-          private: true
+          method: GET
+          authorizer: serviceAuthorizer
   listAllFamiliesForMember:
     name: ${self:custom.listAllFamiliesForMemberName}
     handler: handlers/Read.listAllFamilysForMember
     description: Lambda for getting a member by its id
-    timeout: 30
     events:
-      - http:
+      - httpApi:
           path: /member/{id}/family
-          method: get
-          private: true
+          method: GET
+          authorizer: serviceAuthorizer
 
   deleteFamily:
     name: ${self:custom.deleteFamilyName}
     handler: handlers/Delete.deleteFamily
     description: Lambda for deleting a family by its id
-    timeout: 30
     events:
-      - http:
+      - httpApi:
           path: /family/{id}
-          method: delete
-          private: true
+          method: DELETE
+          authorizer: serviceAuthorizer
   deleteMember:
     name: ${self:custom.deleteMemberName}
     handler: handlers/Delete.deleteMember
     description: Lambda for deleting a member by its id
-    timeout: 30
     events:
-      - http:
+      - httpApi:
           path: /member/{id}
-          method: delete
-          private: true
+          method: DELETE
+          authorizer: serviceAuthorizer
   deleteMemberFromFamily:
     name: ${self:custom.deleteMemberFromFamilyName}
     handler: handlers/Delete.deleteMemberFromFamily
     description: Lambda for deleting a member from a certain family
-    timeout: 30
     events:
-      - http:
+      - httpApi:
           path: /member/{id}/family/{familyId}
-          method: delete
-          private: true
+          method: DELETE
+          authorizer: serviceAuthorizer
   updateFamily:
     name: ${self:custom.updateFamilyName}
     handler: handlers/Update.updateFamily
     description: Lambda for updating a family
-    timeout: 30
     events:
-      - http:
+      - httpApi:
           path: /family/{id}
-          method: put
-          private: true
+          method: PUT
+          authorizer: serviceAuthorizer
   updateMemberForFamily:
     name: ${self:custom.updateMemberInFamilyName}
     handler: handlers/Update.updateMemberForFamily
     description: Lambda for updating a member in a single family
-    timeout: 30
     events:
-      - http:
+      - httpApi:
           path: /member/{id}/family/{familyId}
-          method: put
-          private: true
+          method: PUT
+          authorizer: serviceAuthorizer
   updateMemberGlobally:
     name: ${self:custom.updateMemberGloballyName}
     handler: handlers/Update.updateMemberGlobally
     description: Lambda for updating a member record for member with id in all familys
-    timeout: 30
     events:
-      - http:
+      - httpApi:
           path: /member/{id}
-          method: put
-          private: true
+          method: PUT
+          authorizer: serviceAuthorizer
 
 resources:
   Resources:
@@ -268,12 +255,12 @@ resources:
                 KeyType: RANGE
             Projection:
               ProjectionType: 'ALL'
-    FAMILYPHOTOBUCKET:
-      Type: AWS::S3::Bucket
-      Properties:
-        BucketName: ${self:custom.FamilyPhotoBucketName}
-        AccessControl: Private
-        BucketEncryption:
-          ServerSideEncryptionConfiguration:
-            - ServerSideEncryptionByDefault:
-                SSEAlgorithm: AES256
+    # FAMILYPHOTOBUCKET:
+    #   Type: AWS::S3::Bucket
+    #   Properties:
+    #     BucketName: ${self:custom.FamilyPhotoBucketName}
+    #     AccessControl: Private
+    #     BucketEncryption:
+    #       ServerSideEncryptionConfiguration:
+    #         - ServerSideEncryptionByDefault:
+    #             SSEAlgorithm: AES256
