@@ -91,6 +91,7 @@ custom:
     packager: 'yarn'
 
 plugins:
+  - serverless-puresec-cli
   - serverless-offline
   - serverless-domain-manager
   - serverless-webpack

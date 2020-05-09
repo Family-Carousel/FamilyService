@@ -63,17 +63,17 @@ export class DeleteHandler {
     
             const id = event.pathParameters.id;
             const familyId = event.pathParameters.familyId
-    
-            const member = await this._memberService.GetMemberById(id);
-    
-            if (!member) {
-                return Utilities.BuildResponse(404, JSON.stringify('id for member not valid'));
-            }
-    
+
             const family = await this._familyService.GetFamilyById(familyId);
     
             if (!family) {
                 return Utilities.BuildResponse(404, JSON.stringify('familyId not valid'));
+            }
+    
+            const member = await this._memberService.GetMemberByCompositKey(id, familyId);
+    
+            if (!member) {
+                return Utilities.BuildResponse(404, JSON.stringify('id for member not valid'));
             }
     
             const memberDeleted = await this._memberService.DeleteMember(member);
