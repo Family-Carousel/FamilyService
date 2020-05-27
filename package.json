@@ -8,8 +8,8 @@
     "test:coverage": "yarn jest --coverage",
     "build": "tsc",
     "start": "yarn serverless offline --noTimeout",
-    "deploy:dev": "yarn serverless deploy --stage=dev",
-    "domain:dev": "yarn serverless create_domain --stage=dev",
+    "deploy:test": "yarn serverless deploy --stage=dev",
+    "domain:test": "yarn serverless create_domain --stage=dev",
     "iam": "yarn serverless puresec gen-roles --stage=dev"
   },
   "repository": {
