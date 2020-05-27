@@ -1,3 +1,6 @@
+org: funkel1989
+app: familyservice
+
 service: familyservice
 
 provider:
@@ -16,7 +19,7 @@ provider:
       serviceAuthorizer:
         identitySource: $request.header.Authorization
         issuerUrl: https://familycarousel.auth0.com/
-        audience: familyservice-dev.familycarousel.com
+        audience: ${self:custom.FamilyServiceDomainMap.${self:provider.stage}}
   environment:
     NODE_ENV: ${self:provider.stage}
     FAMILY_TABLE: ${self:custom.familyTableNameMap.${self:provider.stage}}
@@ -67,13 +70,13 @@ custom:
   serverless-offline:
     host: 0.0.0.0
   familyTableNameMap:
-    dev: devFamilyTable
+    dev: testFamilyTable
     prod: prodFamilyTable
   memberTableNameMap:
-    dev: devMemberTable
+    dev: testMemberTable
     prod: prodMemberTable
   FamilyServiceDomainMap:
-    dev: familyservice-dev.familycarousel.com
+    test: familyservice-test.familycarousel.com
     prod: familyservice.familycarousel.com
   FamilyServiceCertMap:
     dev: '*.familycarousel.com'
@@ -90,13 +93,13 @@ custom:
     packager: 'yarn'
 
 plugins:
-  - serverless-puresec-cli
   - serverless-offline
   - serverless-domain-manager
   - serverless-webpack
 
 package:
   individually: true
+  excludeDevDependencies: true
 
 functions:
   createFamily:
