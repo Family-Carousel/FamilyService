@@ -14,7 +14,7 @@ provider:
     httpApi: true
   stage: ${opt:stage, 'test'}
   httpApi:
-    cors: true
+    cors: true 
     authorizers:
       serviceAuthorizer:
         identitySource: $request.header.Authorization
