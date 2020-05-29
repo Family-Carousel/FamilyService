@@ -24,6 +24,7 @@ provider:
     NODE_ENV: ${self:provider.stage}
     FAMILY_TABLE: ${self:custom.familyTableNameMap.${self:provider.stage}}
     MEMBER_TABLE: ${self:custom.memberTableNameMap.${self:provider.stage}}
+    CALENDAR_TABLE: ${self:custom.calendarTableNameMap.${self:provider.stage}}
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
   iamRoleStatements:
     - Effect: 'Allow'
@@ -43,6 +44,11 @@ provider:
         - Fn::Join:
             - '/'
             - - { 'Fn::GetAtt': ['FAMILYTABLE', 'Arn'] }
+              - 'index/*'
+        - { 'Fn::GetAtt': ['CALENDARTABLE', 'Arn'] }
+        - Fn::Join:
+            - '/'
+            - - { 'Fn::GetAtt': ['CALENDARTABLE', 'Arn'] }
               - 'index/*'
     - Effect: 'Allow'
       Action:
@@ -75,6 +81,9 @@ custom:
   memberTableNameMap:
     test: testMemberTable
     prod: prodMemberTable
+  calendarTableNameMap:
+    test: testCalendarTable
+    prod: prodCalendarTable
   FamilyServiceDomainMap:
     test: familyservice-test.familycarousel.com
     prod: familyservice.familycarousel.com
@@ -237,6 +246,21 @@ resources:
                 KeyType: HASH
             Projection:
               ProjectionType: 'ALL'
+    CALENDARTABLE:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.calendarTableNameMap.${self:provider.stage}}
+        AttributeDefinitions:
+          - AttributeName: FamilyId
+            AttributeType: S
+          - AttributeName: Id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: FamilyId
+            KeyType: HASH
+          - AttributeName: Id
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
     MEMBERTABLE:
       Type: AWS::DynamoDB::Table
       Properties:
