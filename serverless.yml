@@ -1,5 +1,5 @@
 org: funkel1989
-app: familyservice
+app: familycarousel-familyservice
 
 service: familyservice
 
@@ -19,7 +19,7 @@ provider:
       serviceAuthorizer:
         identitySource: $request.header.Authorization
         issuerUrl: https://familycarousel.auth0.com/
-        audience: ${self:custom.FamilyServiceDomainMap.${self:provider.stage}}
+        audience: ${self:custom.FamilyServiceAudienceMap.${self:provider.stage}}
   environment:
     NODE_ENV: ${self:provider.stage}
     FAMILY_TABLE: ${self:custom.familyTableNameMap.${self:provider.stage}}
@@ -70,16 +70,19 @@ custom:
   serverless-offline:
     host: 0.0.0.0
   familyTableNameMap:
-    dev: testFamilyTable
+    test: testFamilyTable
     prod: prodFamilyTable
   memberTableNameMap:
-    dev: testMemberTable
+    test: testMemberTable
     prod: prodMemberTable
   FamilyServiceDomainMap:
     test: familyservice-test.familycarousel.com
     prod: familyservice.familycarousel.com
+  FamilyServiceAudienceMap:
+    test: https://familyservice-test.familycarousel.com
+    prod: https://familyservice.familycarousel.com
   FamilyServiceCertMap:
-    dev: '*.familycarousel.com'
+    test: '*.familycarousel.com'
     prod: '*.familycarousel.com'
   customDomain:
     domainName: ${self:custom.FamilyServiceDomainMap.${self:provider.stage}}
