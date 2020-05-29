@@ -12,7 +12,7 @@ provider:
   logRetentionInDays: 3
   logs:
     httpApi: true
-  stage: ${opt:stage, 'dev'}
+  stage: ${opt:stage, 'test'}
   httpApi:
     cors: true
     authorizers:
