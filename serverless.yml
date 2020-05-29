@@ -25,7 +25,7 @@ provider:
     FAMILY_TABLE: ${self:custom.familyTableNameMap.${self:provider.stage}}
     MEMBER_TABLE: ${self:custom.memberTableNameMap.${self:provider.stage}}
     CALENDAR_TABLE: ${self:custom.calendarTableNameMap.${self:provider.stage}}
-    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1 
   iamRoleStatements:
     - Effect: 'Allow'
       Action:
