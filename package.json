@@ -4,7 +4,7 @@
   "description": "Service to handle family data for the family carousel application",
   "main": "handlers/Create.js",
   "scripts": {
-    "test": "yarn jest",
+    "test": "yarn jest --passWithNoTests",
     "test:coverage": "yarn jest --coverage",
     "build": "tsc",
     "start": "yarn serverless offline --noTimeout",
