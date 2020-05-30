@@ -8,6 +8,7 @@ export interface IMember {
     ManagedUser: number;
     EmailAddress: string;
     Age: number;
+    Color: string;
     CreateBy: string;
     CreateDateTime: string;
     LastUpdateDateTime: string;

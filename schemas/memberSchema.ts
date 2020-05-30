@@ -11,13 +11,14 @@ const parser = new TsjsonParser(S({
         DateOfBirth: S({type: 'string'}),
         ManagedUser: S({type: 'number'}),
         EmailAddress: S({type: 'string'}),
+        Color: S({type: 'string'}),
         Age: S({type: 'number'}),
         CreateBy: S({type: 'string'}),
         CreateDateTime: S({type: 'string'}),
         LastUpdateBy: S({type: 'string'}),
         LastUpdateDateTime: S({type: 'string'})
     },
-    required: ['Id', 'FamilyId', 'FirstName', 'DateOfBirth', 'ManagedUser', 'EmailAddress', 'CreateBy', 'CreateDateTime', 'LastUpdateBy', 'LastUpdateDateTime']
+    required: ['Id', 'FamilyId', 'FirstName', 'DateOfBirth', 'Color', 'ManagedUser', 'EmailAddress', 'CreateBy', 'CreateDateTime', 'LastUpdateBy', 'LastUpdateDateTime']
 }))
 
 export function caseTsJsonValidator(data: IMember) {

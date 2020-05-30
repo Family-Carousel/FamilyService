@@ -9,6 +9,7 @@ export class Member implements IMember {
     ManagedUser: number;
     EmailAddress: string;
     Age: number;
+    Color: string;
     CreateBy: string;
     CreateDateTime: string;
     LastUpdateBy: string;
@@ -19,6 +20,7 @@ export class Member implements IMember {
         FamilyId,
         FirstName,
         LastName,
+        Color,
         DateOfBirth,
         ManagedUser,
         EmailAddress,
@@ -33,6 +35,7 @@ export class Member implements IMember {
         this.ManagedUser = this.ValidateManagedUser(ManagedUser, DateOfBirth);
         this.EmailAddress = EmailAddress;
         this.Age = this.DetermineAge(DateOfBirth);
+        this.Color = Color;
         this.CreateBy = CreateBy || UserId!;
         this.CreateDateTime = CreateDateTime || new Date(Date.now()).toISOString();
         this.LastUpdateBy = UserId!;
@@ -47,6 +50,7 @@ export class Member implements IMember {
         if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
             age--;
         }
+        
         return age;
     }
 
@@ -58,6 +62,5 @@ export class Member implements IMember {
         } else {
             return managedUser ? 1 : 0;
         }
-
     }
 };
