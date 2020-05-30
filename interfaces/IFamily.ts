@@ -1,4 +1,5 @@
 import { IMember } from '../interfaces/IMember';
+import { ICalendar } from '../interfaces/ICalendar';
 
 export interface IFamily {
     Id: string;
@@ -6,6 +7,7 @@ export interface IFamily {
     FamilyOwner: string;
     UserId?:string;
     Members?: IMember[]
+    CalendarItems?: ICalendar[]
     Description: string;
     Size: number;
     IsActive: number | boolean;

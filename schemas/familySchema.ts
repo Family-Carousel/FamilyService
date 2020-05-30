@@ -7,6 +7,7 @@ const parser = new TsjsonParser(S({
         Id: S({ type: 'string' }),
         FamilyOwner: S({ type: 'string' }),
         Members: S({ type: 'array' }),
+        CalendarItems: S({ type: 'array' }),
         Name: S({type: 'string'}),
         Description: S({type: 'string'}),
         Size: S({type: 'number'}),
