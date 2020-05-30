@@ -61,6 +61,7 @@ custom:
   serviceName: FamilyService
   createFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-CreateFamily-${self:provider.stage}
   createMemberName: ${self:custom.shortName}-${self:custom.serviceName}-CreateMember-${self:provider.stage}
+  createCalendarEventName: ${self:custom.shortName}-${self:custom.serviceName}-CreateCalendarEvent-${self:provider.stage}
   getFamilyByIdName: ${self:custom.shortName}-${self:custom.serviceName}-GetFamilyById-${self:provider.stage}
   getMemberByIdName: ${self:custom.shortName}-${self:custom.serviceName}-GetMemberById-${self:provider.stage}
   listAllMembersForFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-ListAllMembersForFamily-${self:provider.stage}
@@ -71,6 +72,7 @@ custom:
   deleteFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-DeleteFamily-${self:provider.stage}
   deleteMemberName: ${self:custom.shortName}-${self:custom.serviceName}-DeleteMember-${self:provider.stage}
   deleteMemberFromFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-DeleteMemberFromFamily-${self:provider.stage}
+  deleteCalendarEventFromFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-DeleteCalendarEventFromFamily-${self:provider.stage}
   # getFamilyPhotoName: ${self:custom.shortName}-${self:custom.serviceName}-GetFamilyPhoto-${self:provider.stage}
   FamilyPhotoBucketName: familycarousel-familyservice-photo-bucket-${self:provider.stage}
   serverless-offline:
@@ -132,6 +134,16 @@ functions:
           path: /member
           method: POST
           authorizer: serviceAuthorizer  
+  createCalendarEvent:
+    name: ${self:custom.createCalendarEventName}
+    handler: handlers/Create.createCalendarEvent
+    description: Lambda for Creating a Calendar Event in the family service
+    events:
+      - httpApi:
+          path: /calendar
+          method: POST
+          authorizer: serviceAuthorizer 
+
   getFamilyById:
     name: ${self:custom.getFamilyByIdName}
     handler: handlers/Read.getFamilyById
@@ -150,6 +162,7 @@ functions:
           path: /member/{id}
           method: GET
           authorizer: serviceAuthorizer
+
   listAllMembersForFamily:
     name: ${self:custom.listAllMembersForFamilyName}
     handler: handlers/Read.listAllMembersForFamily
@@ -196,6 +209,16 @@ functions:
           path: /member/{id}/family/{familyId}
           method: DELETE
           authorizer: serviceAuthorizer
+  deleteCalendarEventFromFamily:
+    name: ${self:custom.deleteCalendarEventFromFamilyName}
+    handler: handlers/Delete.deleteCalendarEvent
+    description: Lambda for deleting a calendar event from a certain family
+    events:
+      - httpApi:
+          path: /calendar/{id}/family/{familyId}
+          method: DELETE
+          authorizer: serviceAuthorizer
+
   updateFamily:
     name: ${self:custom.updateFamilyName}
     handler: handlers/Update.updateFamily
