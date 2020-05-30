@@ -9,14 +9,18 @@ import DIContainer from '../di-container';
 import { Utilities } from './utilities';
 import { FamilyService } from '../services/FamilyService';
 import { MemberService } from '../services/MemberService';
+import { CalendarService } from '../services/CalendarService';
 
 export class ReadHandler {
     private _familyService: FamilyService;
     private _memberService: MemberService;
+    private _calendarService: CalendarService;
 
-    constructor(@inject(FamilyService) familyService?: FamilyService, @inject(MemberService) memberService?: MemberService) {
+    constructor(@inject(FamilyService) familyService?: FamilyService, @inject(MemberService) memberService?: MemberService, 
+    @inject(CalendarService) calendarService?: CalendarService) {
         this._familyService = familyService || DIContainer.resolve<FamilyService>(FamilyService);
         this._memberService = memberService || DIContainer.resolve<MemberService>(MemberService);
+        this._calendarService = calendarService || DIContainer.resolve<CalendarService>(CalendarService);
     }
 
     public async GetFamilyById(event: APIGatewayEvent): Promise<ProxyResult> {
@@ -63,6 +67,27 @@ export class ReadHandler {
             return Utilities.BuildResponse(200, JSON.stringify(memberReturn));
         } catch (err) {
             console.error('Family Service list all members in family error: ', err);
+            return Utilities.BuildResponse(500, JSON.stringify('Family Service internal server error'));
+        }
+    }
+
+    public async ListAllCalendarEventsForFamily(event: APIGatewayEvent): Promise<ProxyResult> {
+        try {
+            if (!event || !event.pathParameters || !event.pathParameters.id) {
+                return Utilities.BuildResponse(400, JSON.stringify('Id for family was not provided'));
+            }
+    
+            const familyId = event.pathParameters.id;
+            
+            const eventReturn = await this._calendarService.ListAllCalendarEventsByFamilyId(familyId);
+    
+            if (!eventReturn) {
+                return Utilities.BuildResponse(404, JSON.stringify('Family has no calendar Events'));
+            }
+    
+            return Utilities.BuildResponse(200, JSON.stringify(eventReturn));
+        } catch (err) {
+            console.error('Family Service list all calendar events in family error: ', err);
             return Utilities.BuildResponse(500, JSON.stringify('Family Service internal server error'));
         }
     }
@@ -127,3 +152,4 @@ export const getFamilyById = invokeReadHandler.GetFamilyById.bind(invokeReadHand
 export const listAllMembersForFamily = invokeReadHandler.ListAllMembersForFamily.bind(invokeReadHandler);
 export const getMemberById = invokeReadHandler.GetMemberById.bind(invokeReadHandler);
 export const listAllFamilysForMember = invokeReadHandler.ListAllFamilysForMember.bind(invokeReadHandler);
+export const listAllCalendarEventsForFamily = invokeReadHandler.ListAllCalendarEventsForFamily.bind(invokeReadHandler);

@@ -66,7 +66,7 @@ export class CalendarService {
         }
     }
 
-    public async ListAllMembersByFamilyId(familyId: string): Promise<ICalendar[]> {
+    public async ListAllCalendarEventsByFamilyId(familyId: string): Promise<ICalendar[]> {
         try {
             const events = await this._calendarRepo.ListEventsByFamilyId(familyId);
             return events as ICalendar[];

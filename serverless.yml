@@ -65,6 +65,7 @@ custom:
   getFamilyByIdName: ${self:custom.shortName}-${self:custom.serviceName}-GetFamilyById-${self:provider.stage}
   getMemberByIdName: ${self:custom.shortName}-${self:custom.serviceName}-GetMemberById-${self:provider.stage}
   listAllMembersForFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-ListAllMembersForFamily-${self:provider.stage}
+  listAllCalendarEventsForFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-ListAllCalendarEventsForFamily-${self:provider.stage}
   listAllFamiliesForMemberName: ${self:custom.shortName}-${self:custom.serviceName}-ListAllFamiliesForMember-${self:provider.stage}
   updateFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-UpdateFamily-${self:provider.stage}
   updateMemberInFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-UpdateMemberInFamily-${self:provider.stage}
@@ -171,6 +172,15 @@ functions:
     events:
       - httpApi:
           path: /family/{id}/member
+          method: GET
+          authorizer: serviceAuthorizer
+  listAllCalendarEventsForFamily:
+    name: ${self:custom.listAllCalendarEventsForFamilyName}
+    handler: handlers/Read.listAllMembersForFamily
+    description: Lambda for getting a list of calendar events by family id
+    events:
+      - httpApi:
+          path: /family/{id}/calendar
           method: GET
           authorizer: serviceAuthorizer
   listAllFamiliesForMember:
