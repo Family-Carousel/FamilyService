@@ -19,7 +19,7 @@ const parser = new TsjsonParser(S({
         LastUpdateDateTime: S({type: 'string'})
     },
     required: ['Id', 'FamilyId', 'FirstName', 'DateOfBirth', 'Color', 'ManagedUser', 'EmailAddress', 'CreateBy', 'CreateDateTime', 'LastUpdateBy', 'LastUpdateDateTime']
-}))
+}));
 
 export function caseTsJsonValidator(data: IMember) {
     if (parser.validates(data)) {

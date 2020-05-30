@@ -17,7 +17,7 @@ const parser = new TsjsonParser(S({
         LastUpdateDateTime: S({type: 'string'})
     },
     required: ['Id', 'FamilyId', 'Name', 'Color', 'Start', 'End', 'CreateBy', 'CreateDateTime', 'LastUpdateBy', 'LastUpdateDateTime']
-}))
+}));
 
 export function caseTsJsonValidator(data: ICalendar) {
     if (parser.validates(data)) {

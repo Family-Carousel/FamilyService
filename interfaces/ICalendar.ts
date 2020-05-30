@@ -1,11 +1,11 @@
 export interface ICalendar {
     Id: string;
     FamilyId: string;
-    UserId?: String
+    UserId?: string
     Name: string;
-    Details: number;
+    Details: string;
     Start: string;
-    End: number;
+    End: string;
     Color: string;
     CreateBy: string;
     CreateDateTime: string;
