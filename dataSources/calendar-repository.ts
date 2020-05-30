@@ -6,6 +6,7 @@ interface ICalendarRepo {
     SaveCalendarEvent(calendarData: ICalendar): Promise<ICalendar>;
     DeleteCalendarEvent(FamilyId: string, Id: string | null): Promise<void>;
     ListEventsByFamilyId(familyId: string): Promise<ICalendar[] | void>;
+    GetCalendarEventByCompositKey(familyId: string, id: string): Promise<ICalendar | void>;
 }
 
 const tableName: string = process.env.CALENDAR_TABLE || 'devCalendarTable';
@@ -52,6 +53,20 @@ export class CalendarRepo implements ICalendarRepo {
         } catch (err) {
             console.error('Error getting Calendar Events by family id via Dynamo: ', err);
             throw new Error('Error getting Calendar Events');
+        }
+    }
+
+    public async GetCalendarEventByCompositKey(familyId: string, id: string): Promise<ICalendar | void> {
+        try {
+            const event = await this._dynamoUtilities.Query(tableName, 'FamilyId', familyId, null, 'Id', id);
+            if(event && event.Items && event.Items.length > 0) {
+                return event.Items[0] as ICalendar;
+            }
+
+            return;
+        } catch (err) {
+            console.error('Error getting Calendar Event by id and familyId via Dynamo: ', err);
+            throw new Error('Error getting Calendar event for family');
         }
     }
 }

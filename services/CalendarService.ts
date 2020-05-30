@@ -37,6 +37,16 @@ export class CalendarService {
         }
     }
 
+    public async GetCalendarEventByCompositKey(familyId: string, id: string): Promise<ICalendar> {
+        try {
+            const event = await this._calendarRepo.GetCalendarEventByCompositKey(id, familyId);
+            return event as ICalendar;
+        } catch (err) {
+            console.error('Failed to get Calendar Event by id: ', err);
+            throw new Error('Failed to get Calendar Event by id');
+        }
+    }
+
     public async MapCalendarEventsToFamily(family: IFamily): Promise<IFamily> {
         try {
             const events = await this._calendarRepo.ListEventsByFamilyId(family.Id);
