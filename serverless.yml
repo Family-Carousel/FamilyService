@@ -68,6 +68,7 @@ custom:
   listAllFamiliesForMemberName: ${self:custom.shortName}-${self:custom.serviceName}-ListAllFamiliesForMember-${self:provider.stage}
   updateFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-UpdateFamily-${self:provider.stage}
   updateMemberInFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-UpdateMemberInFamily-${self:provider.stage}
+  updateCalendarEventInFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-UpdateCalendarEventInFamily-${self:provider.stage}
   updateMemberGloballyName: ${self:custom.shortName}-${self:custom.serviceName}-UpdateMemberGlobally-${self:provider.stage}
   deleteFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-DeleteFamily-${self:provider.stage}
   deleteMemberName: ${self:custom.shortName}-${self:custom.serviceName}-DeleteMember-${self:provider.stage}
@@ -235,6 +236,15 @@ functions:
     events:
       - httpApi:
           path: /member/{id}/family/{familyId}
+          method: PUT
+          authorizer: serviceAuthorizer
+  updateCalendarEventForFamily:
+    name: ${self:custom.updateCalendarEventInFamilyName}
+    handler: handlers/Update.updateCalendarEventForFamily
+    description: Lambda for updating a calendar Event in a single family
+    events:
+      - httpApi:
+          path: /calendar/{id}/family/{familyId}
           method: PUT
           authorizer: serviceAuthorizer
   updateMemberGlobally:
