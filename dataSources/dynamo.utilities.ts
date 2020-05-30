@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { AWSError, DynamoDB } from 'aws-sdk';
+import { DynamoDB } from 'aws-sdk';
 import { IFamily } from '../interfaces/IFamily';
 import { IMember } from '../interfaces/IMember';
 import { ICalendar } from '../interfaces/ICalendar';
@@ -55,66 +55,50 @@ export class DynamoUtilities implements IDynamoUtilities {
     return paramsObject;
   }
 
-  public Query(tableName: string, hashName: string, hashValue: string, indexName: string | null = null,
+  public async Query(tableName: string, hashName: string, hashValue: string, indexName: string | null = null,
     rangeName: string | null = null, rangeValue: string | null = null): Promise<DynamoDB.DocumentClient.QueryOutput> {
     const queryObj: DynamoDB.DocumentClient.QueryInput = this.ParamsObjectFactory(tableName, hashName, hashValue, indexName, rangeName, rangeValue);
 
-    return new Promise(function (resolve, reject) {
-      this._dynamoClient
-        .query(queryObj)
-        .promise()
-        .then((res: DynamoDB.DocumentClient.QueryOutput) => resolve(res))
-        .catch((err: AWSError) => reject('Error querying dynamo: ' + err));
-    });
+    return await this._dynamoClient.query(queryObj).promise();
   }
 
-  public PutItem(tableName: string, item: IFamily | IMember | ICalendar): Promise<IFamily | IMember | ICalendar> {
-    return new Promise(function (resolve, reject) {
+  public async PutItem(tableName: string, item: IFamily | IMember | ICalendar): Promise<IFamily | IMember | ICalendar> {
+    var params: DynamoDB.DocumentClient.PutItemInput = {
+      TableName: tableName,
+      Item: item
+    };
 
-      var params: DynamoDB.DocumentClient.PutItemInput = {
-        TableName: tableName,
-        Item: item
-      };
+    await this._dynamoClient.put(params).promise();
 
-      this._dynamoClient
-        .put(params)
-        .promise()
-        .then(() => resolve(item))
-        .catch((err: AWSError) => reject('Error putting document to dynamo: ' + err));
-    });
+    return item;
   }
 
-  public DeleteItem(tableName: string, id: string, rangeName: string | null = null, rangeId: string | null = null): Promise<void> {
-    return new Promise(function (resolve, reject) {
+  public async DeleteItem(tableName: string, id: string, rangeName: string | null = null, rangeId: string | null = null): Promise<void> {
+    var params: DynamoDB.DocumentClient.DeleteItemInput = {
+      TableName: tableName,
+      Key: { Id: id }
+    };
 
-      var params: DynamoDB.DocumentClient.DeleteItemInput = {
-        TableName: tableName,
-        Key: { Id: id }
-      };
-
-      if (rangeName && rangeId) {
-        // for familys
-        if (rangeName === 'FamilyOwner') {
-          params.Key = { Id: id, FamilyOwner: rangeId }
-        }
-
-        // for members
-        if (rangeName === 'FamilyId') {
-          params.Key = { Id: id, FamilyId: rangeId }
-        }
-
-        // for calendar events
-        if (rangeName === 'Id') {
-          params.Key = { FamilyId: id, Id: rangeId }
-        }
+    if (rangeName && rangeId) {
+      // for familys
+      if (rangeName === 'FamilyOwner') {
+        params.Key = { Id: id, FamilyOwner: rangeId }
       }
 
-      this._dynamoClient
-        .delete(params)
-        .promise()
-        .then(() => resolve())
-        .catch((err: AWSError) => reject('Error deleting document from dynamo: ' + err));
-    });
+      // for members
+      if (rangeName === 'FamilyId') {
+        params.Key = { Id: id, FamilyId: rangeId }
+      }
+
+      // for calendar events
+      if (rangeName === 'Id') {
+        params.Key = { FamilyId: id, Id: rangeId }
+      }
+    }
+
+    await this._dynamoClient.delete(params).promise();
+
+    return;
   }
 
   // TODO: Figure out how to type this function
