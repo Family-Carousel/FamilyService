@@ -1,8 +1,9 @@
-import { DocumentClient } from 'aws-sdk/clients/dynamodb';
-import { AWSError } from 'aws-sdk';
+import 'reflect-metadata';
+import { injectable, inject } from 'inversify';
+import { AWSError, DynamoDB } from 'aws-sdk';
 import { IFamily } from '../interfaces/IFamily';
 import { IMember } from '../interfaces/IMember';
-import { injectable } from 'inversify';
+import { ICalendar } from '../interfaces/ICalendar';
 
 interface IExpressionAttributeValues {
   ':hashKeyValue': string;
@@ -18,16 +19,21 @@ interface IParamsObject {
 
 interface IDynamoUtilities {
   Query(tableName: string, hashName: string, hashValue: string, indexName: string | null,
-    rangeName: string | null, rangeValue: string | null): Promise<DocumentClient.QueryOutput>;
-  PutItem(tableName: string, item: IFamily | IMember): Promise<IFamily | IMember>;
+    rangeName: string | null, rangeValue: string | null): Promise<DynamoDB.DocumentClient.QueryOutput>;
+  PutItem(tableName: string, item: IFamily | IMember | ICalendar): Promise<IFamily | IMember | ICalendar>;
   DeleteItem(tableName: string, id: string, rangeName: string | null, rangeId: string | null): Promise<void>;
 }
 
 @injectable()
 export class DynamoUtilities implements IDynamoUtilities {
+  protected _dynamoClient: DynamoDB.DocumentClient;
+
+  constructor(@inject(DynamoDB.DocumentClient) dynamoClient: DynamoDB.DocumentClient) {
+    this._dynamoClient = dynamoClient;
+  }
 
   private ParamsObjectFactory(tableName: string, hashName: string, hashValue: string, indexName: string | null = null,
-    rangeName: string | null = null, rangeValue: string | null = null): DocumentClient.QueryInput {
+    rangeName: string | null = null, rangeValue: string | null = null): DynamoDB.DocumentClient.QueryInput {
     let paramsObject: IParamsObject = {
       TableName: tableName,
       KeyConditionExpression: `${hashName} = :hashKeyValue`,
@@ -50,31 +56,27 @@ export class DynamoUtilities implements IDynamoUtilities {
   }
 
   public Query(tableName: string, hashName: string, hashValue: string, indexName: string | null = null,
-    rangeName: string | null = null, rangeValue: string | null = null): Promise<DocumentClient.QueryOutput> {
-    const queryObj: DocumentClient.QueryInput = this.ParamsObjectFactory(tableName, hashName, hashValue, indexName, rangeName, rangeValue);
-
-    const docClient = new DocumentClient();
+    rangeName: string | null = null, rangeValue: string | null = null): Promise<DynamoDB.DocumentClient.QueryOutput> {
+    const queryObj: DynamoDB.DocumentClient.QueryInput = this.ParamsObjectFactory(tableName, hashName, hashValue, indexName, rangeName, rangeValue);
 
     return new Promise(function (resolve, reject) {
-      docClient
+      this._dynamoClient
         .query(queryObj)
         .promise()
-        .then((res: DocumentClient.QueryOutput) => resolve(res))
+        .then((res: DynamoDB.DocumentClient.QueryOutput) => resolve(res))
         .catch((err: AWSError) => reject('Error querying dynamo: ' + err));
     });
   }
 
-  public PutItem(tableName: string, item: IFamily | IMember): Promise<IFamily | IMember> {
+  public PutItem(tableName: string, item: IFamily | IMember | ICalendar): Promise<IFamily | IMember | ICalendar> {
     return new Promise(function (resolve, reject) {
 
-      var params: DocumentClient.PutItemInput = {
+      var params: DynamoDB.DocumentClient.PutItemInput = {
         TableName: tableName,
         Item: item
       };
 
-      const docClient = new DocumentClient();
-
-      docClient
+      this._dynamoClient
         .put(params)
         .promise()
         .then(() => resolve(item))
@@ -85,29 +87,32 @@ export class DynamoUtilities implements IDynamoUtilities {
   public DeleteItem(tableName: string, id: string, rangeName: string | null = null, rangeId: string | null = null): Promise<void> {
     return new Promise(function (resolve, reject) {
 
-      var params: DocumentClient.DeleteItemInput = {
+      var params: DynamoDB.DocumentClient.DeleteItemInput = {
         TableName: tableName,
         Key: { Id: id }
       };
 
       if (rangeName && rangeId) {
+        // for familys
         if (rangeName === 'FamilyOwner') {
           params.Key = { Id: id, FamilyOwner: rangeId }
         }
 
+        // for members
         if (rangeName === 'FamilyId') {
           params.Key = { Id: id, FamilyId: rangeId }
         }
+
+        // for calendar events
+        if (rangeName === 'Id') {
+          params.Key = { FamilyId: id, Id: rangeId }
+        }
       }
 
-      console.log('params', params);
-
-      const docClient = new DocumentClient();
-
-      docClient
+      this._dynamoClient
         .delete(params)
         .promise()
-        .then((res) => resolve(console.log(res)))
+        .then(() => resolve())
         .catch((err: AWSError) => reject('Error deleting document from dynamo: ' + err));
     });
   }

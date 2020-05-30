@@ -7,6 +7,7 @@ export class Family implements IFamily {
     FamilyOwner: string;
     Description: string;
     Members: [];
+    CalendarItems: [];
     Size: number;
     IsActive: number;
     CreateBy: string;
@@ -29,6 +30,7 @@ export class Family implements IFamily {
         this.FamilyOwner =  FamilyOwner || UserId!;
         this.Description = Description;
         this.Members = [];
+        this.CalendarItems = [];
         this.Size = Size;
         this.IsActive = IsActive ? 1 : 0;
         this.CreateBy = CreateBy || UserId!;

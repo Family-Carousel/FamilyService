@@ -1,3 +1,4 @@
+import { generate } from "shortid";
 import { ICalendar } from '../interfaces/ICalendar';
 
 export class Calendar implements ICalendar {
@@ -24,7 +25,7 @@ export class Calendar implements ICalendar {
         CreateBy,
         CreateDateTime
     }: ICalendar) {
-        this.Id = Id;
+        this.Id = Id || generate();
         this.FamilyId = FamilyId;
         this.Name = Name;
         this.Details = Details;
