@@ -66,6 +66,18 @@ export class CalendarService {
         }
     }
 
+    public async DeleteCalendarEventList(events: ICalendar[]): Promise<boolean> {
+        try {
+            for (let e = 0; e < events.length; e++) {
+                await this._calendarRepo.DeleteCalendarEvent(events[e].FamilyId, events[e].Id);
+            }
+            return true;
+        } catch (err) {
+            console.error('Failed to delete list of Events: ', err);
+            throw new Error('Failed to delete list of Events');
+        }
+    }
+
     public async ListAllCalendarEventsByFamilyId(familyId: string): Promise<ICalendar[]> {
         try {
             const events = await this._calendarRepo.ListEventsByFamilyId(familyId);

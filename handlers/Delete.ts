@@ -41,6 +41,12 @@ export class DeleteHandler {
             if (members) {
                 await this._memberService.DeleteMemberList(members);
             }
+
+            const calendarEvents = await this._calendarService.ListAllCalendarEventsByFamilyId(id);
+
+            if (calendarEvents) {
+                await this._calendarService.DeleteCalendarEventList(calendarEvents);
+            }
     
             const deletedBoolean = await this._familyService.DeleteFamily(id);
     
