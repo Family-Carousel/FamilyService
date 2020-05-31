@@ -45,6 +45,8 @@ export class CalendarRepo implements ICalendarRepo {
         try {
             const calendar = await this._dynamoUtilities.Query(tableName, 'FamilyId', familyId);
 
+            console.log('calendar return: ', calendar);
+
             if (calendar && calendar.Items && calendar.Items.length > 0) {
                 return calendar.Items as ICalendar[];
             }
