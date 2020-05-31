@@ -56,7 +56,7 @@ export class CalendarRepo implements ICalendarRepo {
         }
     }
 
-    public async GetCalendarEventByCompositKey(familyId: string, id: string): Promise<ICalendar | void> {
+    public async GetCalendarEventByCompositKey(id: string, familyId: string): Promise<ICalendar | void> {
         try {
             const event = await this._dynamoUtilities.Query(tableName, 'FamilyId', familyId, null, 'Id', id);
             if(event && event.Items && event.Items.length > 0) {
