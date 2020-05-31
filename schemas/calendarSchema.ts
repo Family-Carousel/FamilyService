@@ -9,7 +9,7 @@ const parser = new TsjsonParser(S({
         Name: S({ type: 'string' }),
         Details: S({type: 'string'}),
         Color: S({type: 'string'}),
-        Start: S({type: 'number'}),
+        Start: S({type: 'string'}),
         End: S({type: 'string'}),
         CreateBy: S({type: 'string'}),
         CreateDateTime: S({type: 'string'}),
