@@ -176,7 +176,7 @@ functions:
           authorizer: serviceAuthorizer
   listAllCalendarEventsForFamily:
     name: ${self:custom.listAllCalendarEventsForFamilyName}
-    handler: handlers/Read.listAllMembersForFamily
+    handler: handlers/Read.listAllCalendarEventsForFamily
     description: Lambda for getting a list of calendar events by family id
     events:
       - httpApi:
