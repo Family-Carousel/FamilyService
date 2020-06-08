@@ -10,6 +10,7 @@ import { Utilities } from './utilities';
 import { FamilyService } from '../services/FamilyService';
 import { MemberService } from '../services/MemberService';
 import { CalendarService } from '../services/CalendarService';
+import { IFamily } from '../interfaces/IFamily';
 
 export class ReadHandler {
     private _familyService: FamilyService;
@@ -116,6 +117,8 @@ export class ReadHandler {
             if (!event || !event.pathParameters || !event.pathParameters.id) {
                 return Utilities.BuildResponse(400, JSON.stringify('Id for member was not provided'));
             }
+
+            let families: IFamily[] = [];
     
             const id = event.pathParameters.id;
     
@@ -124,14 +127,17 @@ export class ReadHandler {
             if (!response) {
                 return Utilities.BuildResponse(404, JSON.stringify('No Members Found'));
             }
-    
-            const families = await this._familyService.ListFamilysForEachMember(response);
-    
-            if (!families) {
+
+            families.push(...await this._familyService.ListFamilysForEachMember(response))
+            families.push(...await this._familyService.ListFamilysByOwningMember(id))
+
+            if (!families || families.length < 1) {
                 return Utilities.BuildResponse(404, JSON.stringify('No Families Found Matching any members'));
             }
+
+            const editedFamilies: IFamily[] = await this._familyService.RemoveFamilyDupsFromFamilyList(families);
     
-            const familyWithMembers = await this._memberService.MapMembersToFamilyList(families);
+            const familyWithMembers = await this._memberService.MapMembersToFamilyList(editedFamilies);
     
             if (!familyWithMembers) {
                 return Utilities.BuildResponse(404, JSON.stringify('Family does not exist'));

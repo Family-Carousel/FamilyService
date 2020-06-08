@@ -4,6 +4,7 @@ import { Family } from '../models/Family';
 import { FamilyRepo } from '../dataSources/family-repository';
 import { caseTsJsonValidator } from '../schemas/familySchema';
 import { inject, injectable } from 'inversify';
+import { uniqBy } from 'lodash';
 
 @injectable()
 export class FamilyService {
@@ -39,6 +40,16 @@ export class FamilyService {
         }
     }
 
+    public async ListFamilysByOwningMember(memberId: string): Promise<IFamily[]> {
+        try {
+            const familys = await this._familyRepo.ListFamilysByFamilyOwner(memberId);
+            return familys as IFamily[]
+        } catch (err) {
+            console.error('Failed to get family by owning member: ', err);
+            throw new Error('Failed to get family by owning member');
+        }
+    }
+
     public async GetFamilyById(id: string): Promise<IFamily> {
         try {
             const family = await this._familyRepo.GetFamilyById(id);
@@ -46,6 +57,16 @@ export class FamilyService {
         } catch(err) {
             console.error('Failed to get family by id: ', err);
             throw new Error('Failed to get family by id');
+        }
+    }
+
+    public async RemoveFamilyDupsFromFamilyList(familyList: IFamily[]): Promise<IFamily[]> {
+        try {
+             const editedFamilyList = uniqBy(familyList, 'Id');
+             return editedFamilyList as IFamily[];
+        } catch (err) {
+            console.error('Failed to dedup family list: ', err);
+            throw new Error('Failed to dedup family list');
         }
     }
 

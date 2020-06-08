@@ -12,7 +12,6 @@
     "domain:prod": "yarn serverless create_domain --stage=prod",
     "deploy:test": "yarn serverless deploy --stage=test",
     "deploy:prod": "yarn serverless deploy --stage=prod"
-
   },
   "repository": {
     "type": "git",
