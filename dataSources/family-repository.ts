@@ -55,7 +55,7 @@ export class FamilyRepo implements IFamilyRepo {
     public async ListAllFamilysForMember(memberId: string): Promise<IFamily[]> {
         try {
             const familyList = await this._dynamoUtilities.Query(tableName, 'MemberId', memberId);
-            return familyList as IFamily[];
+            return familyList.Items as IFamily[];
         } catch (err) {
             console.error('Error listing families for member: ', err);
             throw new Error('Error listing families for member');
@@ -65,7 +65,7 @@ export class FamilyRepo implements IFamilyRepo {
     public async ListFamilysByFamilyOwner(memberId: string): Promise<IFamily[]> {
         try {
             const familyList = await this._dynamoUtilities.Query(tableName, 'FamilyOwner', memberId, 'FamilyOwner_IDX');
-            return familyList as IFamily[];
+            return familyList.Items as IFamily[];
         } catch (err) {
             console.error('Error listing families for family Owner Id: ', err);
             throw new Error('Error listing families for family Owner Id');
