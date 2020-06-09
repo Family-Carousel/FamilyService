@@ -131,7 +131,7 @@ export class ReadHandler {
                 const familysMemberIsPartOf = await this._familyService.ListFamilysForEachMember(response);
 
                 if (familysMemberIsPartOf && familysMemberIsPartOf.length > 1) {
-                    families = families.concat(familysMemberIsPartOf);
+                    families.push(...familysMemberIsPartOf);
                 }
             }
 
@@ -140,7 +140,7 @@ export class ReadHandler {
             console.log('owned families: ', ownedFamilies);
 
             if (ownedFamilies && ownedFamilies.length > 0) {
-                families.concat(ownedFamilies);
+                families.push(...ownedFamilies);
             }
 
             console.log('combined families: ', families);
