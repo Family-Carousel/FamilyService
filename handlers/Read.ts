@@ -128,15 +128,19 @@ export class ReadHandler {
             console.log('member response: ', response);
     
             if (response && response.length > 0) {
-                families.push(...await this._familyService.ListFamilysForEachMember(response));
+                const familysMemberIsPartOf = await this._familyService.ListFamilysForEachMember(response);
+
+                if (familysMemberIsPartOf && familysMemberIsPartOf.length > 1) {
+                    families = families.concat(familysMemberIsPartOf);
+                }
             }
 
-            let ownedFamilies: IFamily[] = await this._familyService.ListFamilysByOwningMember(id);
+            const ownedFamilies: IFamily[] = await this._familyService.ListFamilysByOwningMember(id);
 
             console.log('owned families: ', ownedFamilies);
 
             if (ownedFamilies && ownedFamilies.length > 0) {
-                families.push(...ownedFamilies);
+                families.concat(ownedFamilies);
             }
 
             console.log('combined families: ', families);
