@@ -125,8 +125,6 @@ export class ReadHandler {
     
             const response: IMember[] = await this._memberService.ListAllMembers(id);
 
-            console.log('member response: ', response);
-    
             if (response && response.length > 0) {
                 const familysMemberIsPartOf = await this._familyService.ListFamilysForEachMember(response);
 
@@ -137,25 +135,17 @@ export class ReadHandler {
 
             const ownedFamilies: IFamily[] = await this._familyService.ListFamilysByOwningMember(id);
 
-            console.log('owned families: ', ownedFamilies);
-
             if (ownedFamilies && ownedFamilies.length > 0) {
                 families.push(...ownedFamilies);
             }
-
-            console.log('combined families: ', families);
 
             if (!families || families.length < 1) {
                 return Utilities.BuildResponse(404, JSON.stringify('No Families Found Matching any members'));
             }
 
             const editedFamilies: IFamily[] = await this._familyService.RemoveFamilyDupsFromFamilyList(families);
-
-            console.log('editted families: ', editedFamilies);
     
             const familyWithMembers = await this._memberService.MapMembersToFamilyList(editedFamilies);
-
-            console.log('families with members: ', familyWithMembers);
     
             if (!familyWithMembers) {
                 return Utilities.BuildResponse(404, JSON.stringify('Family does not exist'));
