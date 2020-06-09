@@ -124,12 +124,11 @@ export class ReadHandler {
     
             const response = await this._memberService.ListAllMembers(id);
     
-            if (!response) {
-                return Utilities.BuildResponse(404, JSON.stringify('No Members Found'));
+            if (response) {
+                families.push(...await this._familyService.ListFamilysForEachMember(response));
             }
 
-            families.push(...await this._familyService.ListFamilysForEachMember(response))
-            families.push(...await this._familyService.ListFamilysByOwningMember(id))
+            families.push(...await this._familyService.ListFamilysByOwningMember(id));
 
             if (!families || families.length < 1) {
                 return Utilities.BuildResponse(404, JSON.stringify('No Families Found Matching any members'));
