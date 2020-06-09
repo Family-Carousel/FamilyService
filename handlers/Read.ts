@@ -11,6 +11,7 @@ import { FamilyService } from '../services/FamilyService';
 import { MemberService } from '../services/MemberService';
 import { CalendarService } from '../services/CalendarService';
 import { IFamily } from '../interfaces/IFamily';
+import { IMember } from '../interfaces/IMember';
 
 export class ReadHandler {
     private _familyService: FamilyService;
@@ -122,9 +123,9 @@ export class ReadHandler {
     
             const id = event.pathParameters.id;
     
-            const response = await this._memberService.ListAllMembers(id);
+            const response: IMember[] = await this._memberService.ListAllMembers(id);
     
-            if (response) {
+            if (response && response.length > 0) {
                 families.push(...await this._familyService.ListFamilysForEachMember(response));
             }
 
