@@ -129,7 +129,11 @@ export class ReadHandler {
                 families.push(...await this._familyService.ListFamilysForEachMember(response));
             }
 
-            families.push(...await this._familyService.ListFamilysByOwningMember(id));
+            let ownedFamilies: IFamily[] = await this._familyService.ListFamilysByOwningMember(id);
+
+            if (ownedFamilies && ownedFamilies.length > 0) {
+                families.push(...ownedFamilies);
+            }
 
             if (!families || families.length < 1) {
                 return Utilities.BuildResponse(404, JSON.stringify('No Families Found Matching any members'));
