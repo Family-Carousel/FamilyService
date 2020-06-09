@@ -9,6 +9,7 @@ export class Family implements IFamily {
     Members: [];
     CalendarItems: [];
     Size: number;
+    Color: string;
     IsActive: number;
     CreateBy: string;
     CreateDateTime: string;
@@ -21,6 +22,7 @@ export class Family implements IFamily {
         FamilyOwner,
         Description,
         Size,
+        Color,
         IsActive,
         CreateBy,
         CreateDateTime
@@ -32,6 +34,7 @@ export class Family implements IFamily {
         this.Members = [];
         this.CalendarItems = [];
         this.Size = Size;
+        this.Color = Color;
         this.IsActive = IsActive ? 1 : 0;
         this.CreateBy = CreateBy || UserId!;
         this.CreateDateTime = CreateDateTime || new Date(Date.now()).toISOString();

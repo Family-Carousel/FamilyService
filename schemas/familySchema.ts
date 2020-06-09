@@ -10,6 +10,7 @@ const parser = new TsjsonParser(S({
         CalendarItems: S({ type: 'array' }),
         Name: S({type: 'string'}),
         Description: S({type: 'string'}),
+        Color: S({type: 'string'}),
         Size: S({type: 'number'}),
         IsActive: S({type: 'number'}),
         CreateBy: S({type: 'string'}),
@@ -17,7 +18,7 @@ const parser = new TsjsonParser(S({
         LastUpdateBy: S({type: 'string'}),
         LastUpdateDateTime: S({type: 'string'})
     },
-    required: ['Id', 'FamilyOwner', 'Name', 'IsActive', 'CreateBy', 'LastUpdateBy', 'CreateDateTime', 'LastUpdateDateTime', 'Size']
+    required: ['Id', 'FamilyOwner', 'Name', 'IsActive', 'CreateBy', 'Color', 'LastUpdateBy', 'CreateDateTime', 'LastUpdateDateTime', 'Size']
 }));
 
 export function caseTsJsonValidator(data: IFamily) {

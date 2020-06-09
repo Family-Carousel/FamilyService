@@ -10,6 +10,7 @@ export interface IFamily {
     CalendarItems?: ICalendar[]
     Description: string;
     Size: number;
+    Color: string;
     IsActive: number | boolean;
     CreateBy: string;
     CreateDateTime: string;
