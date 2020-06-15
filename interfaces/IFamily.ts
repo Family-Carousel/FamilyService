@@ -1,5 +1,6 @@
-import { IMember } from '../interfaces/IMember';
-import { ICalendar } from '../interfaces/ICalendar';
+import { IMember } from './IMember';
+import { ICalendar } from './ICalendar';
+import { IRule } from './IRule';
 
 export interface IFamily {
     Id: string;
@@ -11,9 +12,11 @@ export interface IFamily {
     Description: string;
     Size: number;
     Color: string;
+    UsesRules: number | boolean;
+    Rules: IRule[];
     IsActive: number | boolean;
     CreateBy: string;
     CreateDateTime: string;
     LastUpdateBy: string;
     LastUpdateDateTime: string;
-}
+};

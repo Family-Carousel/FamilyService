@@ -8,6 +8,8 @@ export class Family implements IFamily {
     Description: string;
     Members: [];
     CalendarItems: [];
+    UsesRules: number;
+    Rules: [];
     Size: number;
     Color: string;
     IsActive: number;
@@ -23,6 +25,7 @@ export class Family implements IFamily {
         Description,
         Size,
         Color,
+        UsesRules,
         IsActive,
         CreateBy,
         CreateDateTime
@@ -33,6 +36,8 @@ export class Family implements IFamily {
         this.Description = Description;
         this.Members = [];
         this.CalendarItems = [];
+        this.Rules = [];
+        this.UsesRules = UsesRules ? 1: 0;
         this.Size = Size;
         this.Color = Color;
         this.IsActive = IsActive ? 1 : 0;

@@ -27,4 +27,4 @@ export function caseTsJsonValidator(data: IMember) {
     }
 
     throw new Error(`Invalid ${JSON.stringify(parser.getErrors())}`);
-}
+};

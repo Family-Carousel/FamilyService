@@ -13,4 +13,4 @@ export interface IMember {
     CreateDateTime: string;
     LastUpdateDateTime: string;
     LastUpdateBy: string
-}
+};

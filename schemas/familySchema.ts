@@ -8,17 +8,19 @@ const parser = new TsjsonParser(S({
         FamilyOwner: S({ type: 'string' }),
         Members: S({ type: 'array' }),
         CalendarItems: S({ type: 'array' }),
+        Rules: S({ type: 'array' }),
         Name: S({type: 'string'}),
         Description: S({type: 'string'}),
         Color: S({type: 'string'}),
         Size: S({type: 'number'}),
         IsActive: S({type: 'number'}),
+        UsesRule: S({type: 'number'}),
         CreateBy: S({type: 'string'}),
         CreateDateTime: S({type: 'string'}),
         LastUpdateBy: S({type: 'string'}),
         LastUpdateDateTime: S({type: 'string'})
     },
-    required: ['Id', 'FamilyOwner', 'Name', 'IsActive', 'CreateBy', 'Color', 'LastUpdateBy', 'CreateDateTime', 'LastUpdateDateTime', 'Size']
+    required: ['Id', 'FamilyOwner', 'Name', 'IsActive', 'CreateBy', 'Color', 'UsesRule', 'LastUpdateBy', 'CreateDateTime', 'LastUpdateDateTime', 'Size']
 }));
 
 export function caseTsJsonValidator(data: IFamily) {
@@ -27,4 +29,4 @@ export function caseTsJsonValidator(data: IFamily) {
     }
 
     throw new Error(`Invalid ${JSON.stringify(parser.getErrors())}`);
-}
+};

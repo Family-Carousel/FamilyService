@@ -1,5 +1,5 @@
 import { createSchema as S, TsjsonParser } from 'ts-json-validator';
-import { ICalendar } from '../interfaces/ICalendar';
+import { IRule } from '../interfaces/IRule';
 
 const parser = new TsjsonParser(S({
     type: 'object',
@@ -9,17 +9,16 @@ const parser = new TsjsonParser(S({
         Name: S({ type: 'string' }),
         Details: S({type: 'string'}),
         Color: S({type: 'string'}),
-        Start: S({type: 'string'}),
-        End: S({type: 'string'}),
+        AppliesToUserId: S({type: 'string'}),
         CreateBy: S({type: 'string'}),
         CreateDateTime: S({type: 'string'}),
         LastUpdateBy: S({type: 'string'}),
         LastUpdateDateTime: S({type: 'string'})
     },
-    required: ['Id', 'FamilyId', 'Name', 'Color', 'Start', 'End', 'CreateBy', 'CreateDateTime', 'LastUpdateBy', 'LastUpdateDateTime']
+    required: ['Id', 'FamilyId', 'Name', 'Color', 'AppliesToUserId', 'CreateBy', 'CreateDateTime', 'LastUpdateBy', 'LastUpdateDateTime']
 }));
 
-export function caseTsJsonValidator(data: ICalendar) {
+export function caseTsJsonValidator(data: IRule) {
     if (parser.validates(data)) {
         return data;
     }

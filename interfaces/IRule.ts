@@ -1,11 +1,10 @@
-export interface ICalendar {
+export interface IRule {
     Id: string;
     FamilyId: string;
     UserId?: string
     Name: string;
     Details: string;
-    Start: string;
-    End: string;
+    AppliesToUserId: string;
     Color: string;
     CreateBy: string;
     CreateDateTime: string;
