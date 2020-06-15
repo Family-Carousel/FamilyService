@@ -4,6 +4,7 @@ import { DynamoDB } from 'aws-sdk';
 import { IFamily } from '../interfaces/IFamily';
 import { IMember } from '../interfaces/IMember';
 import { ICalendar } from '../interfaces/ICalendar';
+import { IRule } from '../interfaces/IRule';
 
 interface IExpressionAttributeValues {
   ':hashKeyValue': string;
@@ -20,7 +21,7 @@ interface IParamsObject {
 interface IDynamoUtilities {
   Query(tableName: string, hashName: string, hashValue: string, indexName: string | null,
     rangeName: string | null, rangeValue: string | null): Promise<DynamoDB.DocumentClient.QueryOutput>;
-  PutItem(tableName: string, item: IFamily | IMember | ICalendar): Promise<IFamily | IMember | ICalendar>;
+  PutItem(tableName: string, item: IFamily | IMember | ICalendar): Promise<IFamily | IMember | ICalendar | IRule>;
   DeleteItem(tableName: string, id: string, rangeName: string | null, rangeId: string | null): Promise<void>;
 }
 
@@ -62,7 +63,7 @@ export class DynamoUtilities implements IDynamoUtilities {
     return await this._dynamoClient.query(queryObj).promise();
   }
 
-  public async PutItem(tableName: string, item: IFamily | IMember | ICalendar): Promise<IFamily | IMember | ICalendar> {
+  public async PutItem(tableName: string, item: IFamily | IMember | ICalendar | IRule): Promise<IFamily | IMember | ICalendar | IRule> {
     var params: DynamoDB.DocumentClient.PutItemInput = {
       TableName: tableName,
       Item: item
