@@ -9,17 +9,20 @@ import { Utilities } from './utilities';
 import { FamilyService } from '../services/FamilyService';
 import { MemberService } from '../services/MemberService';
 import { CalendarService } from '../services/CalendarService';
+import { RuleService } from '../services/RuleService';
 
 export class CreateHandler {
     private _familyService: FamilyService;
     private _memberService: MemberService;
     private _calendarService: CalendarService;
+    private _ruleService: RuleService;
 
     constructor(@inject(FamilyService) familyService?: FamilyService, @inject(MemberService) memberService?: MemberService, 
-    @inject(CalendarService) calendarService?: CalendarService) {
+    @inject(CalendarService) calendarService?: CalendarService, @inject(RuleService) ruleService?: RuleService) {
         this._familyService = familyService || DIContainer.resolve<FamilyService>(FamilyService);
         this._memberService = memberService || DIContainer.resolve<MemberService>(MemberService);
         this._calendarService = calendarService || DIContainer.resolve<CalendarService>(CalendarService);
+        this._ruleService = ruleService || DIContainer.resolve<RuleService>(RuleService);
     }
 
     public async CreateFamily(event: APIGatewayEvent): Promise<ProxyResult> {
@@ -78,9 +81,29 @@ export class CreateHandler {
             return Utilities.BuildResponse(500, JSON.stringify('Family Service internal server error'));
         }
     }
+
+    public async CreateRule(event: APIGatewayEvent): Promise<ProxyResult> {
+        try {
+            if (!event.body) {
+                return Utilities.BuildResponse(400, JSON.stringify('Object to create was not provided'));
+            }
+            const eventData = JSON.parse(event.body);
+            const eventReturn = await this._ruleService.createRule(eventData);
+
+            if (!eventReturn) {
+                return Utilities.BuildResponse(404, JSON.stringify('Failed to create rule'));
+            }
+
+            return Utilities.BuildResponse(201, JSON.stringify(eventReturn));
+        } catch (err) {
+            console.error('Family Service Create rule error: ', err);
+            return Utilities.BuildResponse(500, JSON.stringify('Family Service internal server error'));
+        }
+    }
 }
 
 export const invokeCreateHandler = new CreateHandler();
 export const createFamily = invokeCreateHandler.CreateFamily.bind(invokeCreateHandler);
 export const createMember = invokeCreateHandler.CreateMember.bind(invokeCreateHandler);
 export const createCalendarEvent = invokeCreateHandler.CreateCalendarEvent.bind(invokeCreateHandler);
+export const createRule = invokeCreateHandler.CreateRule.bind(invokeCreateHandler);

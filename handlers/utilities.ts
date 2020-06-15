@@ -10,4 +10,4 @@ export class Utilities {
             body: body
         }
     }
-}
+};

@@ -6,14 +6,14 @@ import { caseTsJsonValidator } from '../schemas/ruleSchema';
 import { inject, injectable } from 'inversify';
 
 @injectable()
-export class CalendarService {
+export class RuleService {
     protected _ruleRepo: RuleRepo;
 
     constructor(@inject(RuleRepo) ruleRepo: RuleRepo) {
         this._ruleRepo = ruleRepo;
     }
 
-    public async createRulet(ruleData: IRule): Promise<IRule> {
+    public async createRule(ruleData: IRule): Promise<IRule> {
         const newEvent = new Rule(ruleData);
 
         try {

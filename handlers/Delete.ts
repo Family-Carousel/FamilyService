@@ -9,17 +9,20 @@ import { Utilities } from './utilities';
 import { FamilyService } from '../services/FamilyService';
 import { MemberService } from '../services/MemberService';
 import { CalendarService } from '../services/CalendarService';
+import { RuleService } from '../services/RuleService';
 
 export class DeleteHandler {
     private _familyService: FamilyService;
     private _memberService: MemberService;
     private _calendarService: CalendarService;
+    private _ruleService: RuleService;
 
     constructor(@inject(FamilyService) familyService?: FamilyService, @inject(MemberService) memberService?: MemberService, 
-    @inject(CalendarService) calendarService?: CalendarService) {
+    @inject(CalendarService) calendarService?: CalendarService, @inject(RuleService) ruleService?: RuleService) {
         this._familyService = familyService || DIContainer.resolve<FamilyService>(FamilyService);
         this._memberService = memberService || DIContainer.resolve<MemberService>(MemberService);
         this._calendarService = calendarService || DIContainer.resolve<CalendarService>(CalendarService);
+        this._ruleService = ruleService || DIContainer.resolve<RuleService>(RuleService);
     }
 
     public async DeleteFamily(event: APIGatewayEvent): Promise<ProxyResult> {
@@ -46,6 +49,12 @@ export class DeleteHandler {
 
             if (calendarEvents) {
                 await this._calendarService.DeleteCalendarEventList(calendarEvents);
+            }
+
+            const rules = await this._ruleService.ListAllRulesByFamilyId(id);
+
+            if (rules) {
+                await this._ruleService.DeleteRulesList(rules);
             }
     
             const deletedBoolean = await this._familyService.DeleteFamily(id);
@@ -137,6 +146,44 @@ export class DeleteHandler {
         }
     }
 
+    public async DeleteRuleFromFamily(event: APIGatewayEvent): Promise<ProxyResult> {
+        try {
+            if (!event || !event.pathParameters || !event.pathParameters.familyId) {
+                return Utilities.BuildResponse(400, JSON.stringify('Id for family was not provided'));
+            }
+
+            if (!event || !event.pathParameters || !event.pathParameters.id) {
+                return Utilities.BuildResponse(400, JSON.stringify('Id for Event was not provided'));
+            }
+
+            const familyId = event.pathParameters.familyId
+            const id = event.pathParameters.id;
+
+            const family = await this._familyService.GetFamilyById(familyId);
+    
+            if (!family) {
+                return Utilities.BuildResponse(404, JSON.stringify('familyId not valid'));
+            }
+    
+            const rule = await this._ruleService.GetRuleByCompositKey(familyId, id);
+    
+            if (!rule) {
+                return Utilities.BuildResponse(404, JSON.stringify('id for rule not valid'));
+            }
+    
+            const ruleDeleted = await this._ruleService.DeleteRule(rule);
+    
+            if (!ruleDeleted) {
+                return Utilities.BuildResponse(400, JSON.stringify('Failed to delete rule'));
+            }
+    
+            return Utilities.BuildResponse(200, JSON.stringify('Successfully Deleted rule from family'));
+        } catch (err) {
+            console.error('Family Service Delete a rule error: ', err);
+            return Utilities.BuildResponse(500, JSON.stringify('Family Service internal server error'));
+        }
+    }
+
     public async DeleteMember(event: APIGatewayEvent): Promise<ProxyResult> {
         try {
             if (!event || !event.pathParameters || !event.pathParameters.id) {
@@ -163,10 +210,11 @@ export class DeleteHandler {
             return Utilities.BuildResponse(500, JSON.stringify('Family Service internal server error'));
         }
     }
-}
+};
 
 export const invokeDeleteHandler = new DeleteHandler();
 export const deleteFamily = invokeDeleteHandler.DeleteFamily.bind(invokeDeleteHandler);
 export const deleteMemberFromFamily = invokeDeleteHandler.DeleteMemberFromFamily.bind(invokeDeleteHandler);
 export const deleteMember = invokeDeleteHandler.DeleteMember.bind(invokeDeleteHandler);
 export const deleteCalendarEvent = invokeDeleteHandler.DeleteCalendarEventFromFamily.bind(invokeDeleteHandler);
+export const deleteRule = invokeDeleteHandler.DeleteRuleFromFamily.bind(invokeDeleteHandler);
