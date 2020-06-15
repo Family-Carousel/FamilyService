@@ -25,6 +25,7 @@ provider:
     FAMILY_TABLE: ${self:custom.familyTableNameMap.${self:provider.stage}}
     MEMBER_TABLE: ${self:custom.memberTableNameMap.${self:provider.stage}}
     CALENDAR_TABLE: ${self:custom.calendarTableNameMap.${self:provider.stage}}
+    Rule_TABLE: ${self:custom.ruleTableNameMap.${self:provider.stage}}
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1 
   iamRoleStatements:
     - Effect: 'Allow'
@@ -50,6 +51,11 @@ provider:
             - '/'
             - - { 'Fn::GetAtt': ['CALENDARTABLE', 'Arn'] }
               - 'index/*'
+        - { 'Fn::GetAtt': ['RULETABLE', 'Arn'] }
+        - Fn::Join:
+            - '/'
+            - - { 'Fn::GetAtt': ['RULETABLE', 'Arn'] }
+              - 'index/*'
     - Effect: 'Allow'
       Action:
         - 's3: *'
@@ -62,19 +68,23 @@ custom:
   createFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-CreateFamily-${self:provider.stage}
   createMemberName: ${self:custom.shortName}-${self:custom.serviceName}-CreateMember-${self:provider.stage}
   createCalendarEventName: ${self:custom.shortName}-${self:custom.serviceName}-CreateCalendarEvent-${self:provider.stage}
+  createRuleName: ${self:custom.shortName}-${self:custom.serviceName}-CreateRule-${self:provider.stage}
   getFamilyByIdName: ${self:custom.shortName}-${self:custom.serviceName}-GetFamilyById-${self:provider.stage}
   getMemberByIdName: ${self:custom.shortName}-${self:custom.serviceName}-GetMemberById-${self:provider.stage}
   listAllMembersForFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-ListAllMembersForFamily-${self:provider.stage}
   listAllCalendarEventsForFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-ListAllCalendarEventsForFamily-${self:provider.stage}
+  listAllRulesForFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-ListAllRulesForFamily-${self:provider.stage}
   listAllFamiliesForMemberName: ${self:custom.shortName}-${self:custom.serviceName}-ListAllFamiliesForMember-${self:provider.stage}
   updateFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-UpdateFamily-${self:provider.stage}
   updateMemberInFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-UpdateMemberInFamily-${self:provider.stage}
   updateCalendarEventInFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-UpdateCalendarEventInFamily-${self:provider.stage}
+  updateRuleInFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-UpdateRuleInFamily-${self:provider.stage}
   updateMemberGloballyName: ${self:custom.shortName}-${self:custom.serviceName}-UpdateMemberGlobally-${self:provider.stage}
   deleteFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-DeleteFamily-${self:provider.stage}
   deleteMemberName: ${self:custom.shortName}-${self:custom.serviceName}-DeleteMember-${self:provider.stage}
   deleteMemberFromFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-DeleteMemberFromFamily-${self:provider.stage}
   deleteCalendarEventFromFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-DeleteCalendarEventFromFamily-${self:provider.stage}
+  deleteRuleFromFamilyName: ${self:custom.shortName}-${self:custom.serviceName}-DeleteRuleFromFamily-${self:provider.stage}
   # getFamilyPhotoName: ${self:custom.shortName}-${self:custom.serviceName}-GetFamilyPhoto-${self:provider.stage}
   FamilyPhotoBucketName: familycarousel-familyservice-photo-bucket-${self:provider.stage}
   serverless-offline:
@@ -88,6 +98,9 @@ custom:
   calendarTableNameMap:
     test: testCalendarTable
     prod: prodCalendarTable
+  ruleTableNameMap:
+    test: testRuleTable
+    prod: prodRuleTable
   FamilyServiceDomainMap:
     test: familyservice-test.familycarousel.com
     prod: familyservice.familycarousel.com
@@ -145,6 +158,15 @@ functions:
           path: /calendar
           method: POST
           authorizer: serviceAuthorizer 
+  createRule:
+    name: ${self:custom.createRuleName}
+    handler: handlers/Create.createRule
+    description: Lambda for Creating a Fule in the family service
+    events:
+      - httpApi:
+          path: /rule
+          method: POST
+          authorizer: serviceAuthorizer 
 
   getFamilyById:
     name: ${self:custom.getFamilyByIdName}
@@ -181,6 +203,15 @@ functions:
     events:
       - httpApi:
           path: /family/{id}/calendar
+          method: GET
+          authorizer: serviceAuthorizer
+  listAllRulesForFamily:
+    name: ${self:custom.listAllRulesForFamilyName}
+    handler: handlers/Read.listAllRulesForFamily
+    description: Lambda for getting a list of Rules by family id
+    events:
+      - httpApi:
+          path: /family/{id}/rule
           method: GET
           authorizer: serviceAuthorizer
   listAllFamiliesForMember:
@@ -229,6 +260,15 @@ functions:
           path: /calendar/{id}/family/{familyId}
           method: DELETE
           authorizer: serviceAuthorizer
+  deleteRuleFromFamily:
+    name: ${self:custom.deleteRuleFromFamilyName}
+    handler: handlers/Delete.deleteRule
+    description: Lambda for deleting a rule from a certain family
+    events:
+      - httpApi:
+          path: /rule/{id}/family/{familyId}
+          method: DELETE
+          authorizer: serviceAuthorizer
 
   updateFamily:
     name: ${self:custom.updateFamilyName}
@@ -255,6 +295,15 @@ functions:
     events:
       - httpApi:
           path: /calendar/{id}/family/{familyId}
+          method: PUT
+          authorizer: serviceAuthorizer
+  updateRuleForFamily:
+    name: ${self:custom.updateRuleInFamilyName}
+    handler: handlers/Update.updateRuleForFamily
+    description: Lambda for updating a Rule in a single family
+    events:
+      - httpApi:
+          path: /rule/{id}/family/{familyId}
           method: PUT
           authorizer: serviceAuthorizer
   updateMemberGlobally:
@@ -293,6 +342,21 @@ resources:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: ${self:custom.calendarTableNameMap.${self:provider.stage}}
+        AttributeDefinitions:
+          - AttributeName: FamilyId
+            AttributeType: S
+          - AttributeName: Id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: FamilyId
+            KeyType: HASH
+          - AttributeName: Id
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+    RULETABLE:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.ruleTableNameMap.${self:provider.stage}}
         AttributeDefinitions:
           - AttributeName: FamilyId
             AttributeType: S
