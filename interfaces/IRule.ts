@@ -4,7 +4,8 @@ export interface IRule {
     UserId?: string
     Name: string;
     Details: string;
-    AppliesToUserId: string;
+    FamilyRule: number;
+    AppliesToUsers?: string[];
     Color: string;
     CreateBy: string;
     CreateDateTime: string;

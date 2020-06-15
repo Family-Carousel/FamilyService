@@ -7,8 +7,9 @@ export class Rule implements IRule {
     UserId?: string
     Name: string;
     Details: string;
-    AppliesToUserId: string;
+    AppliesToUsers: string[];
     Color: string;
+    FamilyRule: number;
     CreateBy: string;
     CreateDateTime: string;
     LastUpdateDateTime: string;
@@ -20,7 +21,8 @@ export class Rule implements IRule {
         Name,
         Details,
         Color,
-        AppliesToUserId,
+        FamilyRule,
+        AppliesToUsers,
         CreateBy,
         CreateDateTime
     }: IRule) {
@@ -28,7 +30,8 @@ export class Rule implements IRule {
         this.FamilyId = FamilyId;
         this.Name = Name;
         this.Details = Details;
-        this.AppliesToUserId = AppliesToUserId;
+        this.AppliesToUsers = AppliesToUsers || [];
+        this.FamilyRule = FamilyRule ? 1: 0;
         this.Color = Color;
         this.CreateBy = CreateBy || UserId!;
         this.CreateDateTime = CreateDateTime || new Date(Date.now()).toISOString();
