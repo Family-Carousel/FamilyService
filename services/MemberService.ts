@@ -165,8 +165,8 @@ export class MemberService {
             const response = await this._memberRepo.SaveMember(updateMember);
             return response as IMember;
         } catch (err) {
-            console.error('Failed to save family to data table: ', err);
-            throw new Error('Failed to save family to data table');
+            console.error('Failed to save Member on family to data table: ', err);
+            throw new Error('Failed to save Member on family to data table');
         }
     }
 
@@ -198,8 +198,8 @@ export class MemberService {
                 const response = await this._memberRepo.SaveMember(updateMember);
                 updatedMemberList.push(response as IMember);
             } catch (err) {
-                console.error('Failed to save family to data table: ', err);
-                throw new Error('Failed to save family to data table');
+                console.error('Failed to save Member to data table: ', err);
+                throw new Error('Failed to save Member to data table');
             }
         }
 

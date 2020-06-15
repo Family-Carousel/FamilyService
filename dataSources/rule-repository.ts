@@ -36,7 +36,7 @@ export class RuleRepo implements IRuleRepo {
 
             return response;
         } catch (err) {
-            console.error('Error deleting Rule Calendar Event via Dynamo: ', err);
+            console.error('Error deleting via Dynamo: ', err);
             throw new Error('Error deleting Rule via Dynamo');
         }
     }

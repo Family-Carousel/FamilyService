@@ -124,8 +124,8 @@ export class CalendarService {
             const response = await this._calendarRepo.SaveCalendarEvent(updatedEvent);
             return response as ICalendar;
         } catch (err) {
-            console.error('Failed to save family to data table: ', err);
-            throw new Error('Failed to save family to data table');
+            console.error('Failed to save Calendar Event to data table: ', err);
+            throw new Error('Failed to save Calendar Event to data table');
         }
     }
 }
