@@ -4,10 +4,12 @@ import { DynamoDB } from 'aws-sdk';
 import { FamilyRepo } from './dataSources/family-repository';
 import { MemberRepo } from './dataSources/member-repository';
 import { CalendarRepo } from './dataSources/calendar-repository';
+import { RuleRepo } from './dataSources/rule-repository';
 
 import { FamilyService } from './services/FamilyService';
 import { MemberService } from './services/MemberService';
 import { CalendarService } from './services/CalendarService';
+import { RuleService } from './services/RuleService';
 
 import { DynamoUtilities } from './dataSources/dynamo.utilities';
 
@@ -16,10 +18,12 @@ var DIContainer = new Container();
 DIContainer.bind<FamilyRepo>(FamilyRepo).toSelf();
 DIContainer.bind<MemberRepo>(MemberRepo).toSelf();
 DIContainer.bind<CalendarRepo>(CalendarRepo).toSelf();
+DIContainer.bind<RuleRepo>(RuleRepo).toSelf();
 
 DIContainer.bind<FamilyService>(FamilyService).toSelf();
 DIContainer.bind<MemberService>(MemberService).toSelf();
 DIContainer.bind<CalendarService>(CalendarService).toSelf();
+DIContainer.bind<RuleService>(RuleService).toSelf();
 
 DIContainer.bind<DynamoUtilities>(DynamoUtilities).toSelf();
 
