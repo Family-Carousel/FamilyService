@@ -45,8 +45,10 @@ export class ReadHandler {
             const familyWithMembers = await this._memberService.MapMembersToFamily(familyReturn);
 
             const familyWithMembersAndCalendarEvents = await this._calendarService.MapCalendarEventsToFamily(familyWithMembers);
+
+            const familyWithMembersAndCalendarEventsAndRules = await this._ruleService.MapRulesToFamily(familyWithMembersAndCalendarEvents);
     
-            return Utilities.BuildResponse(200, JSON.stringify(familyWithMembersAndCalendarEvents));
+            return Utilities.BuildResponse(200, JSON.stringify(familyWithMembersAndCalendarEventsAndRules));
         } catch (err) {
             console.error('Family Service Get a family error: ', err);
             return Utilities.BuildResponse(500, JSON.stringify('Family Service internal server error'));
