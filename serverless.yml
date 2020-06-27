@@ -118,7 +118,10 @@ custom:
     apiType: http
   webpack:
     webpackConfig: 'webpack.config.js'
-    includeModules: true
+    includeModules: 
+      forceExclude:
+        - aws-sdk
+        - typescript
     packager: 'yarn'
 
 plugins:
