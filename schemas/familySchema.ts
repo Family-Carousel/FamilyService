@@ -14,13 +14,13 @@ const parser = new TsjsonParser(S({
         Color: S({type: 'string'}),
         Size: S({type: 'number'}),
         IsActive: S({type: 'number'}),
-        UsesRule: S({type: 'number'}),
+        UsesRules: S({type: 'number'}),
         CreateBy: S({type: 'string'}),
         CreateDateTime: S({type: 'string'}),
         LastUpdateBy: S({type: 'string'}),
         LastUpdateDateTime: S({type: 'string'})
     },
-    required: ['Id', 'FamilyOwner', 'Name', 'IsActive', 'CreateBy', 'Color', 'UsesRule', 'LastUpdateBy', 'CreateDateTime', 'LastUpdateDateTime', 'Size']
+    required: ['Id', 'FamilyOwner', 'Name', 'IsActive', 'CreateBy', 'Color', 'UsesRules', 'LastUpdateBy', 'CreateDateTime', 'LastUpdateDateTime', 'Size']
 }));
 
 export function caseTsJsonValidator(data: IFamily) {
